@@ -37,8 +37,7 @@ public enum Temperature {
 	FAHRENHEIT {
 
 		/**
-		 * Converts a temperature value in degrees celsius to degrees
-		 * fahrenheit.
+		 * Converts a temperature value in degrees celsius to degrees fahrenheit.
 		 * 
 		 * @param	value
 		 * 			The given temperature value.
@@ -51,8 +50,7 @@ public enum Temperature {
 		}
 		
 		/**
-		 * Converts a temperature value in degrees fahrenheit to degrees
-		 * celsius.
+		 * Converts a temperature value in degrees fahrenheit to degrees celsius.
 		 * 
 		 * @param	value
 		 * 			The given temperature value.
@@ -67,16 +65,13 @@ public enum Temperature {
 	};
 	
 	/**
-	 * Converts a temperature value in degrees celsius to the unit specified
-	 * by the enumeration object. This method by default returns the value
-	 * for a conversion to degrees celsius, it is overridden for the other
-	 * units.
+	 * Converts a temperature value in degrees celsius to the unit specified by the enumeration object. This method by
+     * default returns the value for a conversion to degrees celsius, it is overridden for the other units.
 	 * 
 	 * @param	value
 	 * 			The given temperature value.
 	 * @throws	IllegalArgumentException
-	 * 			Throws an illegal argument exception if the given
-	 * 			temperature value is invalid.
+	 * 			Throws an illegal argument exception if the given temperature value is invalid.
 	 * 			| value < -273.15
 	 * @return	The converted temperature value.
 	 * 			| result == Math.floor(value)
@@ -88,16 +83,13 @@ public enum Temperature {
 	}
 	
 	/**
-	 * Converts a temperature value from the unit specified by the
-	 * enumeration object to degrees celsius. This method by default returns
-	 * the value for a conversion from degrees celsius, it is overridden for
-	 * the other units.
+	 * Converts a temperature value from the unit specified by the enumeration object to degrees celsius. This method by
+     * default returns the value for a conversion from degrees celsius, it is overridden for the other units.
 	 * 
 	 * @param	value
 	 * 			The given temperature value.
 	 * @throws	IllegalArgumentException
-	 * 			Throws an illegal argument exception if the given
-	 * 			temperature value is invalid.
+	 * 			Throws an illegal argument exception if the given temperature value is invalid.
 	 * 			| value < -273.15
 	 * @return	The converted temperature value.
 	 * 			| result == Math.ceil(value)

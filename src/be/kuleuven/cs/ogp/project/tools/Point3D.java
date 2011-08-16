@@ -24,9 +24,9 @@ public class Point3D {
 	 * 			| setZ(z)
 	 */
 	public Point3D(int x, int y, int z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		setX(x);
+		setY(y);
+		setZ(z);
 	}
 
 	/**
