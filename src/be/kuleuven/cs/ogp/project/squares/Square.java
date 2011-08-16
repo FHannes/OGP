@@ -8,11 +8,9 @@ import be.kuleuven.cs.som.annotate.Raw;
 /**
  * This class represents a square or tile in the game.
  * 
- * @invar	The temperature assigned to the square can not be smaller than
- * 			-200°C or larger than 5000°C.
+ * @invar	The temperature assigned to the square can not be smaller than -200°C or larger than 5000°C.
  * 			| (this.getTemp() >= -200) && (this.getTemp() <= 5000)
- * @invar	The humidity value assigned to the square can never be smaller than
- * 			0 or larger than 100.
+ * @invar	The humidity value assigned to the square can never be smaller than 0 or larger than 100.
  * 			| (this.getHumidity() >= 0) && (this.getHumidity() <= 100)
  * 
  * @author	Frédéric Hannes (http://www.freddy1990.net/)
@@ -27,8 +25,7 @@ public class Square {
 	private static final int DMG_COLD_MIN = -5;
 	
 	/**
-	 * The number of degrees below the minimum for cold damage required to
-	 * receive a damage point.
+	 * The number of degrees below the minimum for cold damage required to receive a damage point.
 	 */
 	@Model
 	private static final int DMG_COLD_INTERVAL = 10;
@@ -137,9 +134,8 @@ public class Square {
 	}
 	
 	/**
-	 * Checks whether the temperature is a valid one to be stored in an object
-	 * of Square. The temperature is valid if it's not smaller than -200°C and
-	 * not larger than 5000°C.
+	 * Checks whether the temperature is a valid one to be stored in an object of Square. The temperature is valid if
+     * it's not smaller than -200°C and not larger than 5000°C.
 	 * 
 	 * @param	temp
 	 * 			The given temperature.
@@ -153,19 +149,16 @@ public class Square {
 	/**
 	 * Returns the cold damage received on this square.
 	 * 
-	 * @return	Returns 0 if the temperature is above the cold damage
-	 * 			temperature boundary. If the temperature is below this level,
-	 * 			the number of damage points received is calculated and returned.
+	 * @return	Returns 0 if the temperature is above the cold damage temperature boundary. If the temperature is below
+     *          this level, the number of damage points received is calculated and returned.
 	 * 			| if (getTemp() <= DMG_COLD_MIN)
-	 * 			| 	result == (int) Math.floor((getTemp() - DMG_COLD_MIN) /
-	 * 			|		DMG_COLD_INTERVAL);
+	 * 			| 	result == (int) Math.floor((getTemp() - DMG_COLD_MIN) / DMG_COLD_INTERVAL);
 	 * 			| else result == 0;
 	 */
 	@Raw
 	public int getColdDmg() {
 		if (getTemp() <= DMG_COLD_MIN)
-			return (int) Math.floor((0 - (getTemp() - DMG_COLD_MIN)) /
-					DMG_COLD_INTERVAL);
+			return (int) Math.floor((0 - (getTemp() - DMG_COLD_MIN)) / DMG_COLD_INTERVAL);
 		else
 			return 0;
 	}
@@ -179,8 +172,7 @@ public class Square {
 	}
 
 	/**
-	 * Sets the new maximum temperature above which heat damage can occur for
-	 * all squares.
+	 * Sets the new maximum temperature above which heat damage can occur for all squares.
 	 * 
 	 * @param	temp
 	 * 			The given new temperature.
@@ -218,9 +210,8 @@ public class Square {
 	/**
 	 * Returns the heat damage received on this square.
 	 * 
-	 * @return	Returns 0 if the temperature is below the heat damage
-	 * 			temperature boundary. If the temperature is below this level,
-	 * 			the number of damage points received is calculated and returned.
+	 * @return	Returns 0 if the temperature is below the heat damage temperature boundary. If the temperature is below
+     *          this level, the number of damage points received is calculated and returned.
 	 * 			| if (getTemp() <= DMG_COLD_MIN)
 	 * 			| 	result == (int) Math.floor((getTemp() - DMG_COLD_MIN) /
 	 * 			|		DMG_COLD_INTERVAL);
@@ -229,15 +220,13 @@ public class Square {
 	@Raw
 	public int getHeatDmg() {
 		if (getTemp() >= DMG_HEAT_MAX)
-			return (int) Math.floor((getTemp() - DMG_HEAT_MAX) /
-					DMG_HEAT_INTERVAL);
+			return (int) Math.floor((getTemp() - DMG_HEAT_MAX) / DMG_HEAT_INTERVAL);
 		else
 			return 0;
 	}
 
 	/**
-	 * Returns the humidity of the square. The humidity is returned as a
-	 * percentage with an accuracy of 2 decimals.
+	 * Returns the humidity of the square. The humidity is returned as a percentage with an accuracy of 2 decimals.
 	 */
 	@Basic @Raw
 	public double getHumidity() {
@@ -260,12 +249,11 @@ public class Square {
 	}
 	
 	/**
-	 * Checks whether a given value for humidity is valid. The value is valid if
-	 * it's not smaller than 0 or larger than 100.
+	 * Checks whether a given value for humidity is valid.
 	 * 
 	 * @param	humidity
 	 * 			The given humidity.
-	 * @return	True if the humidity value is valid.
+	 * @return	True if the humidity value is valid. The value is valid if it's not smaller than 0 or larger than 100.
 	 * 			| result == ((humidity >= 0) && (humidity <= 100))
 	 */
 	public static boolean isValidHumidity(double humidity) {
@@ -276,13 +264,11 @@ public class Square {
 	 * Calculates the damage received by rust from this square based on the
 	 * current humidity.
 	 * 
-	 * @return	Returns 0 if the humidity is smaller than the maximum humidity
-	 * 			under which no rust damage will occur. If the humidity is larger
-	 * 			than this level, the rust damage is calculated with 1 point for
-	 * 			each specific interval above this level.
+	 * @return	Returns 0 if the humidity is smaller than the maximum humidity under which no rust damage will occur.
+     *          If the humidity is larger than this level, the rust damage is calculated with 1 point for each specific
+     *          interval above this level.
 	 * 			| if (getTemp() >= DMG_RUST_MAX)
-	 * 			|	return (int) Math.floor((getTemp() - DMG_RUST_MAX) /
-	 * 			|		DMG_RUST_INTERVAL);
+	 * 			|	return (int) Math.floor((getTemp() - DMG_RUST_MAX) / DMG_RUST_INTERVAL);
 	 * 			| else return 0;
 	 */
 	@Raw
@@ -317,29 +303,26 @@ public class Square {
 	/**
 	 * Determines whether the square is slippery.
 	 * 
-	 * @return	Returns true if the square is slippery because of a slippery
-	 * 			floor, or when the humidity of the square is 100% and the
-	 * 			temperature is larger than 0°C, or when the humidity is larger
-	 * 			than 10% and the temperature of the square is not positive.
-	 * 			| result == isSlipperyFloor() || ((getHumidity() == 100) && 
-	 * 			|	(getTemp() > 0)) || ((getHumidity() > 10) && (getTemp() <= 0));
+	 * @return	Returns true if the square is slippery because of a slippery floor, or when the humidity of the square
+     *          is 100% and the	temperature is larger than 0°C, or when the humidity is larger than 10% and the
+     *          temperature of the square is not positive.
+	 * 			| result == isSlipperyFloor() || ((getHumidity() == 100) && (getTemp() > 0)) ||
+     * 		    |	((getHumidity() > 10) && (getTemp() <= 0));
 	 */
 	public boolean isSlippery() {
-		return isSlipperyFloor() || ((getHumidity() == 100) && (getTemp() > 0)) 
-				|| ((getHumidity() > 10) && (getTemp() <= 0));
+		return isSlipperyFloor() || ((getHumidity() == 100) && (getTemp() > 0)) || ((getHumidity() > 10) &&
+                (getTemp() <= 0));
 	}
 	
 	/**
 	 * Calculates the inhabitability of a square.
 	 * 
-	 * @return	The inhabitability index of the square after being calculated
-	 * 			with a specific formula.
-	 * 			| result == - (Math.sqrt(Math.pow(getHeatDmg(), 3)) /
-	 * 			|	Math.sqrt(101 - getHumidity()) + Math.sqrt(getColdDmg()));
+	 * @return	The inhabitability index of the square after being calculated with a specific formula.
+	 * 			| result == - (Math.sqrt(Math.pow(getHeatDmg(), 3)) / Math.sqrt(101 - getHumidity()) +
+     * 		    |	Math.sqrt(getColdDmg()));
 	 */
 	public double getInhabitability() {
-		return - (Math.sqrt(Math.pow(getHeatDmg(), 3)) / Math.sqrt(101 - 
-				getHumidity()) + Math.sqrt(getColdDmg()));
+		return - (Math.sqrt(Math.pow(getHeatDmg(), 3)) / Math.sqrt(101 - getHumidity()) + Math.sqrt(getColdDmg()));
 	}
 
 	/**
@@ -352,21 +335,18 @@ public class Square {
 	}
 	
 	/**
-	 * Sets the value for the field containing the bitmask which indicates
-	 * which borders are present on the square.
+	 * Sets the value for the field containing the bitmask which indicates which borders are present on the square.
 	 * 
 	 * @param	borders
 	 * 			The given borders bitmask value.
-	 * @post	If the given borders value is smaller than 0, all borders will
-	 * 			be deactivated.
+	 * @post	If the given borders value is smaller than 0, all borders will be deactivated.
 	 * 			| if (borders < 0)
 	 * 			|	new.getBorders() == 0;
-	 * @post	If the given borders value is larger than the maximum possible
-	 * 			borders value, all borders will be activated.
+	 * @post	If the given borders value is larger than the maximum possible borders value, all borders will be
+     *          activated.
 	 * 			| if (borders >= BORDER_MAX)
 	 * 			|	new.getBorders() == (BORDER_MAX - 1)
-	 * @post	If the given borders value is valid, it will be set as the
-	 * 			current value.
+	 * @post	If the given borders value is valid, it will be set as the current value.
 	 * 			| if ((borders >= 0) && (borders < BORDER_MAX))
 	 * 			|	new.getBorders() == borders
 	 */
@@ -387,12 +367,12 @@ public class Square {
 	 * @return	If the given border bitmask is invalid, the method returns false.
 	 * 			| if (!isValidBorder(border))
 	 * 			|	result == false
-	 * @return	If the given border bitmask is valid, the method returns true if
-	 * 			the borders specified by the value are active.
+	 * @return	If the given border bitmask is valid, the method returns true if the borders specified by the value are
+     *          active.
 	 * 			| if (isValidBorder(border))
 	 * 			|	result == ((getBorders() & border) != 0)
-	 * @note	Multiple borders can be specified in the bitmask using the
-	 * 			bitwise or operator to combine several border bitmasks.
+	 * @note	Multiple borders can be specified in the bitmask using the bitwise or operator to combine several border
+     *          bitmasks.
 	 */
 	public boolean hasBorder(int border) {
 		if (!isValidBorder(border))
@@ -408,13 +388,12 @@ public class Square {
 	 * 			The border bitmask.
 	 * @param	active
 	 * 			True if the border has to be set to active.
-	 * @effect	If the given border bitmask is valid and the border has to be
-	 * 			activated, all borders specified by the bitmask border are added.
+	 * @effect	If the given border bitmask is valid and the border has to be activated, all borders specified by the
+     *          bitmask border are added.
 	 * 			| if (isValidBorder(border) && active)
 	 * 			|	setBorders(getBorders() | border)
-	 * @effect	If the given border bitmask is valid and the border has to be
-	 * 			deactivated, all borders specified by the bitmask border are 
-	 * 			removed.
+	 * @effect	If the given border bitmask is valid and the border has to be deactivated, all borders specified by the
+     *          bitmask border are removed.
 	 * 			| if (isValidBorder(border) && !active)
 	 * 			|	setBorders(getBorders() & -border)
 	 */
