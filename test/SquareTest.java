@@ -1,8 +1,7 @@
 import static org.junit.Assert.fail;
 
+import be.kuleuven.cs.ogp.project.Square;
 import org.junit.Test;
-
-import be.kuleuven.cs.ogp.project.squares.Square;
 
 /**
  * This class is a unit test for the class Square to perform a series of tests to validate the integrity of the class.

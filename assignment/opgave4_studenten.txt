@@ -1,0 +1,30 @@
+1. De associatie tussen kerkers en vakjes moet bi-directioneel worden uitgewerkt (en niet langer uni-directioneel).
+
+2. Vakjes binnen dezelfde ruimte moeten niet langer allemaal dezelfde temperatuur en vochtigheid hebben. Elke vakje
+    behoudt zijn eigen waarden, tenzij ze expliciet worden aangepast met de daarote voorziene methodes.
+
+3. Er moet een nieuw soort begrenzing worden teogevoegd. Die begrenzing bestaat uit een plastic folie. Ze is gesloten
+    tot de folie gescheurd wordt. Vanaf dan is ze open.
+
+4. De hoeveelheid geheugen die door een plateau of een schacht wordt ingenomen moet recht evenredig zijn met het aantal
+    vakjes.
+
+5. Samengestelde kerkers kunnen vanaf nu ook zelf vakjes bevatten. Uiteraard kan dat enkel op posities die niet
+    ingenomen worden door deelkerkers.
+
+6. Er moet een methode worden uitgewerkt voor kerkers die alle teleportatievakjes teruggeeft, die de kerker direct of
+    indirect bevat. Die methode moet zodanig zijn dat ze niet moet aangepast worden wanneer er andere soorten
+    teleportatievakjes worden ingevoerd (en ook niet als bijvoorbeeld rotsvakjes ook teleportatiefaciliteiten zouden
+    krijgen).
+
+7. Er worden een reeks extra beperkingen opgelegde omtrent de inhoud van een samengestelde kerker. Ten eerste mogen
+    kerkers die deel uitmaken van een samengestelde niet overlappen. Verder mag geen enkele kerker die deel uitmaakt van
+    een samengestelde kerker ooit leeg zijn. Tenslotte mag geen enkele deelkerker meer vakjes bevatten dan alle andere
+    deelkerkers samen.
+
+8. Er moet een klasse van avators worden toegevoegd, die kunnen gepositioneerd worden op vakjes binnen een kerker. Er
+    moet daarbij minstens een methode worden uitgewerkt om een avator vanuit zijn huidige positie één positie te laten
+    bewegen in een gegeven richting. Als de avator zich daarbij bevindt op een teleportatievakje, wordt willekeurig
+    beslist of de beweging gaat naar het naburige vakje, dan wel naar één van de bestemmingen van het teleportatievakje.
+    Verschillende avators kunnen nooit samen op een zelfde vakje staan. Als een avator zich beweegt naar een vakje waar
+    zich reeds een avator bevindt, zal willekeurig één van beiden sterven.

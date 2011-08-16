@@ -1,5 +1,6 @@
-package be.kuleuven.cs.ogp.project.squares;
+package be.kuleuven.cs.ogp.project;
 
+import be.kuleuven.cs.ogp.project.tools.Point3D;
 import be.kuleuven.cs.ogp.project.tools.Tools;
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
@@ -96,6 +97,16 @@ public class Square {
     private static final int BORDER_MAX = BORDER_FLOOR * 2;
 
     /**
+     * The dungeon to which this square is linked.
+     */
+    private Dungeon dungeon = null;
+
+    /**
+     * The position of the square in the dungeon it's assigned to.
+     */
+    private Point3D pos = null;
+
+    /**
      * Stores the temperature of the square in degrees Celsius.
      */
     private int temp;
@@ -156,6 +167,58 @@ public class Square {
         setHumidity(0);
         setSlipperyFloor(false);
         setBorders(0);
+    }
+
+    /**
+     * Returns the dungeon to which this square is linked. Null is returned if the square has not been assigned to a
+     * dungeon yet.
+     */
+    @Basic
+    public Dungeon getDungeon() {
+        return dungeon;
+    }
+
+    /**
+     * Sets the dungeon to which the square will be linked.
+     *
+     * @param   dungeon
+     *          The given dungeon.
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception when the given dungeon is invalid.
+     *          | dungeon == null
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception when the square is already linked to a dungeon.
+     *          | this.dungeon != null
+     * @post    The parent dungeon is set to the given dungeon.
+     *          | new.getDungeon() == dungeon
+     */
+    void setDungeon(Dungeon dungeon) throws IllegalArgumentException {
+        if (dungeon == null)
+            throw new IllegalArgumentException("Invalid dungeon!");
+        if (this.dungeon != null)
+            throw new IllegalArgumentException("The square is already linked to a dungeon!");
+        this.dungeon = dungeon;
+    }
+
+    /**
+     * Returns the position of the square in it's parent dungeon if it is assigned to one. If the square has not yet
+     * been assigned to a dungeon, null is returned. The returned object is a clone of the internal object to prevent
+     * the internal data from being modified.
+     */
+    public Point3D getPos() {
+        return (Point3D) pos.clone();
+    }
+
+    /**
+     * Sets the position of the square in it's dungeon.
+     *
+     * @param   pos
+     *          The given position.
+     * @post    The new position equals the given position.
+     *          | new.getPos() == pos
+     */
+    void setPos(Point3D pos) {
+        this.pos = pos;
     }
 
     /**

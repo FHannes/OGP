@@ -1,4 +1,6 @@
-package be.kuleuven.cs.ogp.project.squares.borders;
+package be.kuleuven.cs.ogp.project.borders;
+
+import be.kuleuven.cs.ogp.project.Border;
 
 /**
  * This class specifies a wall border which can be placed on a square.

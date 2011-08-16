@@ -1,4 +1,4 @@
-package be.kuleuven.cs.ogp.project.squares.borders;
+package be.kuleuven.cs.ogp.project;
 
 /**
  * This class specifies an abstract base class for all borders that can be placed on a square.

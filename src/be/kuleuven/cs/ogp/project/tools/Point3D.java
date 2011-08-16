@@ -4,18 +4,18 @@ import be.kuleuven.cs.som.annotate.Basic;
 
 /**
  * This class holds a 3 dimensional coordinate set.
- * 
+ *
  * @author	Frederic Hannes
  */
 public class Point3D {
-	
+
 	private int x;
 	private int y;
 	private int z;
-	
+
 	/**
 	 * Initializes this 3 dimensional point with given x, y and z values.
-	 * 
+	 *
 	 * @effect	The given x-coordinate is set as the new x-coordinate.
 	 * 			| setX(x)
 	 * @effect	The given y-coordinate is set as the new y-coordinate.
@@ -39,7 +39,7 @@ public class Point3D {
 
 	/**
 	 * Set the x-coordinate for this object to the given x-coordinate.
-	 * 
+	 *
 	 * @param	x
 	 * 			The given x-coordinate.
 	 * @post	The new x-coordinate equals the given x-coordinate.
@@ -60,7 +60,7 @@ public class Point3D {
 
 	/**
 	 * Set the y-coordinate for this object to the given y-coordinate.
-	 * 
+	 *
 	 * @param	y
 	 * 			The given y-coordinate.
 	 * @post	The new y-coordinate equals the given y-coordinate.
@@ -81,7 +81,7 @@ public class Point3D {
 
 	/**
 	 * Set the z-coordinate for this object to the given z-coordinate.
-	 * 
+	 *
 	 * @param	z
 	 * 			The given z-coordinate.
 	 * @post	The new z-coordinate equals the given z-coordinate.
@@ -91,5 +91,32 @@ public class Point3D {
 	public void setZ(int z) {
 		this.z = z;
 	}
-	
+
+    /**
+     * Creates and returns a copy of this object.
+     *
+     * @return  Returns a clone of the object.
+     *          | result == new Point3D(getX(), getY(), getZ())
+     */
+    @Override
+    public Object clone() {
+        return new Point3D(getX(), getY(), getZ());
+    }
+
+    /**
+     * Indicates whether some other object is "equal to" this one.
+     *
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the given object is not of the same class.
+     *          | !(obj instanceof Point3D)
+     * @return  Returns true if the points have equal coordinates.
+     *          | result == ((this.getX() == obj.getX()) && (this.getY() == obj.getY()) && (this.getZ() == obj.getZ()))
+     */
+    @Override
+    public boolean equals(Object obj) throws IllegalArgumentException {
+        if (!(obj instanceof Point3D))
+            throw new IllegalArgumentException("Object of foreign class!");
+        Point3D p = (Point3D) obj;
+        return (this.getX() == p.getX()) && (this.getY() == p.getY()) && (this.getZ() == p.getZ());
+    }
 }

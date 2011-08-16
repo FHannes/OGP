@@ -1,4 +1,4 @@
-package be.kuleuven.cs.ogp.project.squares;
+package be.kuleuven.cs.ogp.project;
 
 /**
  * This enumeration specifies a 3 dimensional direction in a confined space.
