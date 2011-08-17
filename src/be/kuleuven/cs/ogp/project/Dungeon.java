@@ -88,7 +88,7 @@ public class Dungeon {
      * Returns the maximum size for the X dimension.
      */
     @Basic @Raw
-    public long getXDimMax() {
+    public final long getXDimMax() {
         return xDimMax;
     }
 
@@ -101,7 +101,7 @@ public class Dungeon {
      *          | new.getXDimMax() == xDimMax
      */
     @Model @Raw
-    protected void setXDimMax(long xDimMax) {
+    protected final void setXDimMax(long xDimMax) {
         this.xDimMax = xDimMax;
     }
 
@@ -109,7 +109,7 @@ public class Dungeon {
      * Returns the maximum size for the Y dimension.
      */
     @Basic @Raw
-    public long getYDimMax() {
+    public final long getYDimMax() {
         return yDimMax;
     }
 
@@ -122,7 +122,7 @@ public class Dungeon {
      *          | new.getYDimMax() == yDimMax
      */
     @Model @Raw
-    protected void setYDimMax(long yDimMax) {
+    protected final void setYDimMax(long yDimMax) {
         this.yDimMax = yDimMax;
     }
 
@@ -130,7 +130,7 @@ public class Dungeon {
      * Returns the maximum size for the Z dimension.
      */
     @Basic @Raw
-    public long getZDimMax() {
+    public final long getZDimMax() {
         return zDimMax;
     }
 
@@ -143,7 +143,7 @@ public class Dungeon {
      *          | new.getZDimMax() == zDimMax
      */
     @Model @Raw
-    protected void setZDimMax(long zDimMax) {
+    protected final void setZDimMax(long zDimMax) {
         this.zDimMax = zDimMax;
     }
 
@@ -151,7 +151,7 @@ public class Dungeon {
      * Returns the size of the X dimension of the dungeon.
      */
     @Basic @Raw
-    public long getXDim() {
+    public final long getXDim() {
         return xDim;
     }
 
@@ -168,7 +168,7 @@ public class Dungeon {
      *          | xDim > this.getXDimMax()
      */
     @Model @Raw
-    private void setXDim(long xDim) throws IllegalArgumentException {
+    private final void setXDim(long xDim) throws IllegalArgumentException {
         if (xDim < this.getXDim())
             throw new IllegalArgumentException("The new X dimension has to be larger than the old one!");
         if (xDim > this.getXDimMax())
@@ -180,7 +180,7 @@ public class Dungeon {
      * Returns the size of the Y dimension of the dungeon.
      */
     @Basic @Raw
-    public long getYDim() {
+    public final long getYDim() {
         return yDim;
     }
 
@@ -197,7 +197,7 @@ public class Dungeon {
      *          | yDim > this.getYDimMax()
      */
     @Model @Raw
-    public void setYDim(long yDim) throws IllegalArgumentException {
+    public final void setYDim(long yDim) throws IllegalArgumentException {
         if (yDim < this.getYDim())
             throw new IllegalArgumentException("The new Y dimension has to be larger than the old one!");
         if (yDim > this.getYDimMax())
@@ -209,7 +209,7 @@ public class Dungeon {
      * Returns the size of the Z dimension of the dungeon.
      */
     @Basic @Raw
-    public long getZDim() {
+    public final long getZDim() {
         return zDim;
     }
 
@@ -226,12 +226,26 @@ public class Dungeon {
      *          | zDim > this.getZDimMax()
      */
     @Model @Raw
-    public void setZDim(long zDim) throws IllegalArgumentException {
+    public final void setZDim(long zDim) throws IllegalArgumentException {
         if (zDim < this.getZDim())
             throw new IllegalArgumentException("The new Z dimension has to be larger than the old one!");
         if (zDim > this.getZDimMax())
             throw new IllegalArgumentException("The new Z dimension is larger than the maximum allowed size!");
         this.zDim = zDim;
+    }
+
+    /**
+     * Checks whether a given position is valid for use with the dungeon class.
+     *
+     * @param   pos
+     *          The given position.
+     * @return  True if the position is valid.
+     *          | result == !((pos == null) || ((pos.getX() == pos.getY()) && (pos.getY() == pos.getZ())) ||
+     *          |   (pos.getY() < 0) || (pos.getZ() < 0))
+     */
+    public static boolean isValidPos(Point3D pos) {
+        return !((pos == null) || ((pos.getX() == pos.getY()) && (pos.getY() == pos.getZ())) || (pos.getX() < 0) ||
+            (pos.getY() < 0) || (pos.getZ() < 0));
     }
 
     /**
@@ -270,9 +284,11 @@ public class Dungeon {
      *          Throws an illegal argument exception if the given square is invalid.
      *          | square == null
      * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the given square is already part of a dungeon.
+     *          | square.getDungeon() != null
+     * @throws  IllegalArgumentException
      *          Throws an illegal argument exception if the given position is invalid.
-     *          | (pos == null) || ((pos.getX() == pos.getY()) && (pos.getY() == pos.getZ())) || (pos.getX() < 0) ||
-                |   (pos.getY() < 0) || (pos.getZ() < 0)
+     *          | !isValidPos(pos)
      * @throws  IllegalArgumentException
      *          Throws an illegal argument exception if a square exists at the given position.
      *          | this.getSquares().containsKey(pos)
@@ -297,8 +313,9 @@ public class Dungeon {
     public void addSquare(Square square, Point3D pos) throws IllegalArgumentException {
         if (square == null)
             throw new IllegalArgumentException("Invalid square!");
-        if ((pos == null) || ((pos.getX() == pos.getY()) && (pos.getY() == pos.getZ())) || (pos.getX() < 0) ||
-                (pos.getY() < 0) || (pos.getZ() < 0))
+        if (square.getDungeon() != null)
+            throw new IllegalArgumentException("The given square is already part of a dungeon!");
+        if (!isValidPos(pos))
             throw new IllegalArgumentException("Invalid position!");
         if (this.getSquares().containsKey(pos))
             throw new IllegalArgumentException("A square exists at the given position!");
@@ -310,16 +327,22 @@ public class Dungeon {
             if ((slipperyCount / getSquares().size()) > MAX_SLIPPERY)
                 throw new IllegalArgumentException("Maximum allowed tiles with a slippery floor is already present!");
         }
+        // Add square to dungeon
         if (pos.getX() >= this.getXDim())
             this.setXDim(pos.getX() + 1);
         if (pos.getY() >= this.getYDim())
             this.setYDim(pos.getY() + 1);
         if (pos.getZ() >= this.getZDim())
             this.setZDim(pos.getZ() + 1);
-        squares.put((Point3D) pos.clone(), square);
+        getSquares().put((Point3D) pos.clone(), square);
         square.setDungeon(this);
         square.setPos(pos);
-        // TODO: Finish
+        // Link squares
+        for (Direction dir : Direction.values()) {
+            Square neighbour = getSquare(dir.move(pos));
+            if (neighbour != null)
+                square.link(neighbour, dir);
+        }
     }
 
 }

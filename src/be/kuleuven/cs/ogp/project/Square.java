@@ -552,4 +552,50 @@ public class Square {
         this.setTemp((int) Math.round(newTemp));
     }
 
+    /**
+     * Internal method to link 2 squares together.
+     *
+     * @pre     Before calling this method both squares have to have their coordinates and dungeon set to allow the
+     *          method to check whether they are next to each other and in the same dungeon.
+     * @param   square
+     *          The given square.
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the given square is invalid.
+     *          | square == null
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the dungeon isn't set for one of the squares.
+     *          | (this.getDungeon() == null) || (square.getDungeon() == null)
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the position isn't set for one of the squares.
+     *          | (this.getPos() == null) || (square.getPos() == null)
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the squares are located in different dungeons.
+     *          | !this.getDungeon().equals(square.getDungeon())
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the squares are not next to each other in the given direction.
+     *          | !square.getPos().equals(dir.move(this.getPos()))
+     * @post    The squares now share a linked border.
+     *          | new.getBorder(dir).getAdjacent().getSquare().equals(square)
+     */
+    void link(Square square, Direction dir) throws IllegalArgumentException {
+        if (square == null)
+            throw new IllegalArgumentException("Invalid square!");
+        if ((this.getDungeon() == null) || (square.getDungeon() == null))
+            throw new IllegalArgumentException("Dungeon not set!");
+        if ((this.getPos() == null) || (square.getPos() == null))
+            throw new IllegalArgumentException("Position not set!");
+        if (!this.getDungeon().equals(square.getDungeon()))
+            throw new IllegalArgumentException("Squares are located in different dungeons!");
+        if (!square.getPos().equals(dir.move(this.getPos())))
+            throw new IllegalArgumentException("Squares are not located next to each other in the given direction!");
+        // Determine the proper border to place between both squares
+        Border border = this.getBorder(dir);
+        Border border2 = square.getBorder(dir.opposite());
+        if (!border2.overridden(border))
+            border = border2;
+        // Link the squares
+        this.setBorder(border, dir);
+        square.setBorder(border, dir.opposite());
+    }
+
 }

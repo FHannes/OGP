@@ -143,4 +143,21 @@ public class Point3D {
         Point3D p = (Point3D) obj;
         return (this.getX() == p.getX()) && (this.getY() == p.getY()) && (this.getZ() == p.getZ());
     }
+
+    /**
+     * Returns a hash code value for the object.
+     */
+    @Override
+    public int hashCode() {
+        return new Long(getX()).hashCode() + new Long(getY()).hashCode() + new Long(getZ()).hashCode();
+    }
+
+    /**
+     * Returns a string representation of the object.
+     */
+    @Override
+    public String toString() {
+        return "Point3D(" + getX() + ", " + getY() + ", " + getZ() + ")";
+    }
+
 }
