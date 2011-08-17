@@ -9,9 +9,9 @@ import be.kuleuven.cs.som.annotate.Basic;
  */
 public class Point3D {
 
-	private int x;
-	private int y;
-	private int z;
+	private long x;
+	private long y;
+	private long z;
 
 	/**
 	 * Initializes this 3 dimensional point with given x, y and z values.
@@ -23,7 +23,7 @@ public class Point3D {
 	 * @effect	The given z-coordinate is set as the new z-coordinate.
 	 * 			| setZ(z)
 	 */
-	public Point3D(int x, int y, int z) {
+	public Point3D(long x, long y, long z) {
 		setX(x);
 		setY(y);
 		setZ(z);
@@ -33,7 +33,7 @@ public class Point3D {
 	 * Return the x-coordinate stored in the object.
 	 */
 	@Basic
-	public int getX() {
+	public long getX() {
 		return x;
 	}
 
@@ -46,7 +46,7 @@ public class Point3D {
 	 * 			| new.getX() == x
 	 */
 	@Basic
-	public void setX(int x) {
+	public void setX(long x) {
 		this.x = x;
 	}
 
@@ -54,7 +54,7 @@ public class Point3D {
 	 * Return the y-coordinate stored in the object.
 	 */
 	@Basic
-	public int getY() {
+	public long getY() {
 		return y;
 	}
 
@@ -67,7 +67,7 @@ public class Point3D {
 	 * 			| new.getY() == y
 	 */
 	@Basic
-	public void setY(int y) {
+	public void setY(long y) {
 		this.y = y;
 	}
 
@@ -75,7 +75,7 @@ public class Point3D {
 	 * Return the z-coordinate stored in the object.
 	 */
 	@Basic
-	public int getZ() {
+	public long getZ() {
 		return z;
 	}
 
@@ -88,7 +88,7 @@ public class Point3D {
 	 * 			| new.getZ() == z
 	 */
 	@Basic
-	public void setZ(int z) {
+	public void setZ(long z) {
 		this.z = z;
 	}
 
