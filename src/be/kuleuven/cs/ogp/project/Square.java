@@ -1,10 +1,14 @@
 package be.kuleuven.cs.ogp.project;
 
+import be.kuleuven.cs.ogp.project.borders.NoBorder;
 import be.kuleuven.cs.ogp.project.tools.Point3D;
 import be.kuleuven.cs.ogp.project.tools.Tools;
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class represents a square or tile in the game.
@@ -61,42 +65,6 @@ public class Square {
     private static final double MERGE_WEIGHT = 0.2; // 0.1 <= MERGE_WEIGHT <= 0.4
 
     /**
-     * The border identifier constant for the ceiling border.
-     */
-    public static final int BORDER_CEILING = 1;
-
-    /**
-     * The border identifier constant for the north border.
-     */
-    public static final int BORDER_NORTH = 2;
-
-    /**
-     * The border identifier constant for the east border.
-     */
-    public static final int BORDER_EAST = 4;
-
-    /**
-     * The border identifier constant for the south border.
-     */
-    public static final int BORDER_SOUTH = 8;
-
-    /**
-     * The border identifier constant for the west border.
-     */
-    public static final int BORDER_WEST = 16;
-
-    /**
-     * The border identifier constant for the floor border.
-     */
-    public static final int BORDER_FLOOR = 32;
-
-    /**
-     * The maximum number of border identifier values.
-     */
-    @Model
-    private static final int BORDER_MAX = BORDER_FLOOR * 2;
-
-    /**
      * The dungeon to which this square is linked.
      */
     private Dungeon dungeon = null;
@@ -125,30 +93,7 @@ public class Square {
     /**
      * Contains all of the borders of the square.
      */
-    private int borders;
-
-    /**
-     * Creates a new instance of a square with a given temperature and humidity.
-     *
-     * @param   temp
-     *          The given temperature.
-     * @param   humidity
-     *          The given humidity.
-     * @effect  Sets the given temperature as the object's temperature.
-     *          | setTemp(temp)
-     * @effect  Sets the given humidity as the object's humidity.
-     *          | setHumidity(humidity)
-     * @effect  Sets the floor to being not slippery by default.
-     *          | setSlipperyFloor(false)
-     * @effect  Sets the borders to being all inactive by default.
-     *          | setBorders(0)
-     */
-    public Square(int temp, double humidity) {
-        setTemp(temp);
-        setHumidity(humidity);
-        setSlipperyFloor(false);
-        setBorders(0);
-    }
+    private Map<Direction, Border> borders = new HashMap<>();
 
     /**
      * Creates a new instance of a square.
@@ -160,13 +105,43 @@ public class Square {
      * @effect  Sets the floor to being not slippery by default.
      *          | setSlipperyFloor(false)
      * @effect  Sets the borders to being all inactive by default.
-     *          | setBorders(0)
+     *          | setBorder(new NoBorder(), Direction.NORTH)
+     *          | setBorder(new NoBorder(), Direction.EAST)
+     *          | setBorder(new NoBorder(), Direction.SOUTH)
+     *          | setBorder(new NoBorder(), Direction.WEST)
+     *          | setBorder(new NoBorder(), Direction.CEILING)
+     *          | setBorder(new NoBorder(), Direction.FLOOR)
      */
     public Square() {
         setTemp(0);
         setHumidity(0);
         setSlipperyFloor(false);
-        setBorders(0);
+        setBorder(new NoBorder(), Direction.NORTH);
+        setBorder(new NoBorder(), Direction.EAST);
+        setBorder(new NoBorder(), Direction.SOUTH);
+        setBorder(new NoBorder(), Direction.WEST);
+        setBorder(new NoBorder(), Direction.CEILING);
+        setBorder(new NoBorder(), Direction.FLOOR);
+    }
+
+    /**
+     * Creates a new instance of a square with a given temperature and humidity.
+     *
+     * @param   temp
+     *          The given temperature.
+     * @param   humidity
+     *          The given humidity.
+     * @effect  Creates the instance with all of the default settings.
+     *          | this();
+     * @effect  Sets the given temperature as the object's temperature.
+     *          | setTemp(temp)
+     * @effect  Sets the given humidity as the object's humidity.
+     *          | setHumidity(humidity)
+     */
+    public Square(int temp, double humidity) {
+        this();
+        setTemp(temp);
+        setHumidity(humidity);
     }
 
     /**
@@ -447,95 +422,83 @@ public class Square {
     }
 
     /**
-     * Returns the field containing the bitmask which indicates which borders are active on the square.
+     * Internal getter to access the map containing the borders.
      */
-    @Basic @Raw
-    public int getBorders() {
+    @Basic @Model
+    private Map<Direction, Border> getBorders() {
         return borders;
     }
 
     /**
-     * Sets the value for the field containing the bitmask which indicates which borders are present on the square.
+     * Returns the border at the given direction.
      *
-     * @param   borders
-     *          The given borders bitmask value.
-     * @post    If the given borders value is smaller than 0, all borders will be deactivated.
-     *          | if (borders < 0)
-     *          |   new.getBorders() == 0;
-     * @post    If the given borders value is larger than the maximum possible borders value, all borders will be
-     *          activated.
-     *          | if (borders >= BORDER_MAX)
-     *          |   new.getBorders() == (BORDER_MAX - 1)
-     * @post    If the given borders value is valid, it will be set as the current value.
-     *          | if ((borders >= 0) && (borders < BORDER_MAX))
-     *          |   new.getBorders() == borders
-     */
-    public void setBorders(int borders) {
-        if (borders < 0)
-            this.borders = 0;
-        else if (borders >= BORDER_MAX)
-            this.borders = BORDER_MAX - 1;
-        else
-            this.borders = borders;
-    }
-
-    /**
-     * Checks whether the square has one or more borders.
-     *
-     * @param   border
-     *          The border bitmask.
-     * @return  If the given border bitmask is invalid, the method returns false.
-     *          | if (!isValidBorder(border))
-     *          |   result == false
-     * @return  If the given border bitmask is valid, the method returns true if the borders specified by the value are
-     *          active.
-     *          | if (isValidBorder(border))
-     *          |   result == ((getBorders() & border) != 0)
-     * @note    Multiple borders can be specified in the bitmask using the bitwise or operator to combine several border
-     *          bitmasks.
+     * @param   dir
+     *          The given direction.
+     * @return  Returns null if the direction is invalid or if the direction does not have a border associated with it.
+     *          | if ((dir == null) || (!getBorders().containsKey(dir)))
+     *          |   result == null
+     * @return  Returns the border associated with the direction if the direction is valid and a border is associated
+     *          with it.
+     *          | if ((dir != null) && (getBorders().containsKey(dir)))
+     *          |   getBorders().get(dir)
+     * @note    If the given direction is valid, a border should ALWAYS be associated with it, unless a subclass did not
+     *          implement it's constructors properly.
      */
     @Raw
-    public boolean hasBorder(int border) {
-        if (!isValidBorder(border))
-            return false;
-        else
-            return (getBorders() & border) != 0;
+    public Border getBorder(Direction dir) {
+        if ((dir != null) && (getBorders().containsKey(dir)))
+            return getBorders().get(dir);
+        return null;
     }
 
     /**
-     * Sets one or more borders specified by a bitmask to active or non-active.
+     * Internal method to update a border at a certain direction if one is already set.
      *
      * @param   border
-     *          The border bitmask.
-     * @param   active
-     *          True if the border has to be set to active.
-     * @effect  If the given border bitmask is valid and the border has to be activated, all borders specified by the
-     *          bitmask border are added.
-     *          | if (isValidBorder(border) && active)
-     *          |   setBorders(getBorders() | border)
-     * @effect  If the given border bitmask is valid and the border has to be deactivated, all borders specified by the
-     *          bitmask border are removed.
-     *          | if (isValidBorder(border) && !active)
-     *          |   setBorders(getBorders() & -border)
+     *          The given border.
+     * @param   dir
+     *          The given direction.
+     * @return  The old border object that was present at the direction after removing it's reference to the square.
+     *          | result == getBorders().remove(dir)
      */
-    public void setBorder(int border, boolean active) {
-        if (isValidBorder(border))
-            if (active)
-                setBorders(getBorders() | border);
-            else
-                setBorders(getBorders() & -border);
+    private Border updateBorder(Border border, Direction dir) {
+        if ((border != null) && (dir != null) && (getBorders().containsKey(dir))) {
+            Border old = getBorders().remove(dir);
+            old.setSquare(null);
+            border.setSquare(this);
+            getBorders().put(dir, border);
+            return old;
+        }
+        return null;
     }
 
     /**
-     * Checks whether a given border bitmask is valid.
+     * Sets a new border for a certain direction. The border is cloned before storing to prevent a single border being
+     * added to several squares.
      *
      * @param   border
-     *          The given border identifier.
-     * @return  True if the given value is valid.
-     *          | result == ((border >= 0) && (border < BORDER_MAX))
+     *          The border object.
+     * @param   dir
+     *          The border's direction.
+     * @post    The new border for the given direction equals the given border.
+     *          | new.getBorder(dir) == border
      */
-    public static boolean isValidBorder(int border) {
-        return (border >= 0) && (border < BORDER_MAX);
+    public void setBorder(Border border, Direction dir) {
+        if ((border != null) && (dir != null)) {
+            border = (Border) border.clone();
+            if (getBorders().containsKey(dir)) {
+                Border old = updateBorder(border, dir);
+                if (old.getAdjacent() != null) {
+                    Square neighbour = old.getAdjacent().getSquare();
+                    old.setAdjacent(null);
+                    old = neighbour.updateBorder((Border) border.clone(), dir.opposite());
+                    old.setAdjacent(null);
+                }
+            } else {
+                getBorders().put(dir, border);
+                border.setSquare(this);
+            }
+        }
     }
 
     /**
@@ -543,8 +506,8 @@ public class Square {
      *
      * @param   square
      *          The given square.
-     * @param   border
-     *          The given border.
+     * @param   dir
+     *          The given border direction.
      * @throws  IllegalArgumentException
      *          Throws an illegal argument exception if the given square is invalid.
      *          | square == null
@@ -552,14 +515,11 @@ public class Square {
      *          Throws an illegal argument exception if the given square is the current square object.
      *          | square.equals(this)
      * @throws  IllegalArgumentException
-     *          Throws an illegal argument exception if the given border bitmask is invalid.
-     *          | !isValidBorder(border)
-     * @throws  IllegalArgumentException
-     *          Throws an illegal argument exception if the given border bitmask does not equal a single border.
-     *          | !Tools.isPow2(border)
+     *          Throws an illegal argument exception if the given border direction is invalid.
+     *          | dir == null
      * @effect  The given border is removed for the current and given square.
-     *          | this.setBorder(border, false)
-     *          | square.setBorder(border, false)
+     *          | this.setAdjacent(new NoBorder(), dir)
+     *          | square.setAdjacent(new NoBorder(), dir)
      * @effect  Both squares are assigned the arithmic mean of their humidities.
      *          | newHumidity = (getHumidity() + square.getHumidity()) / 2
      *          | this.setHumidity(newHumidity)
@@ -571,18 +531,16 @@ public class Square {
      *          | this.setTemp(Math.round(newTemp))
      */
     @Raw
-    public void mergeWith(Square square, int border) throws IllegalArgumentException {
+    public void mergeWith(Square square, Direction dir) throws IllegalArgumentException {
         if (square == null)
             throw new IllegalArgumentException("Invalid square!");
         if (square.equals(this))
             throw new IllegalArgumentException("A square can not be merged with itself!");
-        if (!isValidBorder(border))
-            throw new IllegalArgumentException("The given border bitmask is not valid!");
-        if (!Tools.isPow2(border))
-            throw new IllegalArgumentException("The given border bitmask does not equal a single border!");
+        if (dir == null)
+            throw new IllegalArgumentException("The given border direction is not valid!");
 
-        this.setBorder(border, false);
-        square.setBorder(border, false);
+        this.setBorder(new NoBorder(), dir);
+        square.setBorder(new NoBorder(), dir);
 
         double newHumidity = (getHumidity() + square.getHumidity()) / 2;
         this.setHumidity(newHumidity);

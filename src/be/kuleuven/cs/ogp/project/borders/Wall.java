@@ -50,4 +50,12 @@ public class Wall extends Border {
         return false;
     }
 
+    /**
+     * Creates and returns a copy of this object.
+     */
+    @Override
+    public Object clone() {
+        return new Wall(isSlippery());
+    }
+
 }

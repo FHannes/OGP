@@ -33,4 +33,12 @@ public class NoBorder extends Border {
         return true;
     }
 
+    /**
+     * Creates and returns a copy of this object.
+     */
+    @Override
+    public Object clone() {
+        return new NoBorder();
+    }
+
 }

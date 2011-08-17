@@ -5,7 +5,7 @@ import be.kuleuven.cs.ogp.project.Border;
 /**
  * This class specifies a border made out of plastic foil which can be torn to open the border.
  *
- * @author Frederic
+ * @author Frederic Hannes
  */
 public class PlasticFoil extends Border {
 
@@ -41,6 +41,19 @@ public class PlasticFoil extends Border {
      */
     public void tear() {
         torn = true;
+        if (getAdjacent() != null)
+            ((PlasticFoil) getAdjacent()).tear();
+    }
+
+    /**
+     * Creates and returns a copy of this object.
+     */
+    @Override
+    public Object clone() {
+        PlasticFoil pf = new PlasticFoil();
+        if (canPassThrough())
+            pf.tear();
+        return pf;
     }
 
 }
