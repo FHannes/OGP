@@ -192,6 +192,7 @@ public class Square {
      * @post    The parent dungeon is set to the given dungeon.
      *          | new.getDungeon() == dungeon
      */
+    @Model
     void setDungeon(Dungeon dungeon) throws IllegalArgumentException {
         if (dungeon == null)
             throw new IllegalArgumentException("Invalid dungeon!");
@@ -210,15 +211,17 @@ public class Square {
     }
 
     /**
-     * Sets the position of the square in it's dungeon.
+     * Sets the position of the square in it's dungeon. The saved position is cloned to prevent the internal data from
+     * being modified.
      *
      * @param   pos
      *          The given position.
      * @post    The new position equals the given position.
      *          | new.getPos() == pos
      */
+    @Model
     void setPos(Point3D pos) {
-        this.pos = pos;
+        this.pos = (Point3D) pos.clone();
     }
 
     /**

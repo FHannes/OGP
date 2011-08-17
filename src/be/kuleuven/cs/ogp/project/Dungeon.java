@@ -6,6 +6,7 @@ import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,6 +22,11 @@ import java.util.Map;
  * @author  Frederic Hannes
  */
 public class Dungeon {
+
+    /**
+     * The maximum allowed fraction of squares with a slippery floor in the dungeon.
+     */
+    private static final double MAX_SLIPPERY = 0.2; // 0 <= MAX_SLIPPERY <= 1
 
     /**
      * The maximum size of the X dimension.
@@ -229,16 +235,74 @@ public class Dungeon {
     }
 
     /**
+     * Returns the map containing all of the dungeon's squares.
+     */
+    @Model
+    private Map<Point3D, Square> getSquares() {
+        return squares;
+    }
+
+    /**
+     * Gets the square at a certain position.
+     *
+     * @param   pos
+     *          The given position.
+     * @return  Returns null if the position is invalid or no square is assigned to it in the dungeon.
+     *          | if ((pos == null) || (!this.getSquares().containsKey(pos)))
+     *          |   result == null
+     * @return  Returns the square square at the given position.
+     *          | result == this.getSquares().get(pos)
+     */
+    public Square getSquare(Point3D pos) {
+        if ((pos == null) || (!this.getSquares().containsKey(pos)))
+            return null;
+        return this.getSquares().get(pos);
+    }
+
+    /**
      * Adds a square to the dungeon.
      *
      * @param   square
+     *          The given square.
      * @param   pos
+     *          The given position for the square.
      * @throws  IllegalArgumentException
      *          Throws an illegal argument exception if the given square is invalid.
+     *          | square == null
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the given position is invalid.
+     *          | (pos == null) || ((pos.getX() == pos.getY()) && (pos.getY() == pos.getZ()))
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if a square exists at the given position.
+     *          | this.getSquares().containsKey(pos)
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the maximum allowed number of squares with a slippery floor is
+     *          already present in the dungeon.
+     *          | (slipperyCount / getSquares().size()) > MAX_SLIPPERY
+     * @post    The given square is now part of the dungeon.
+     *          | new.getSquare(pos).equals(square) == true
+     * @effect  The square is assigned to the dungeon and can not be assigned to any other dungeon afterwards.
+     *          | square.setDungeon(this)
+     *          | square.setPos(pos)
      */
     public void addSquare(Square square, Point3D pos) throws IllegalArgumentException {
         if (square == null)
             throw new IllegalArgumentException("Invalid square!");
+        if ((pos == null) || ((pos.getX() == pos.getY()) && (pos.getY() == pos.getZ())))
+            throw new IllegalArgumentException("Invalid position!");
+        if (this.getSquares().containsKey(pos))
+            throw new IllegalArgumentException("A square exists at the given position!");
+        if (square.isSlipperyFloor()) {
+            int slipperyCount = 0;
+            for (Square sq : getSquares().values())
+                if (sq.isSlipperyFloor())
+                    slipperyCount++;
+            if ((slipperyCount / getSquares().size()) > MAX_SLIPPERY)
+                throw new IllegalArgumentException("Maximum allowed tiles with a slippery floor is already present!");
+        }
+        squares.put((Point3D) pos.clone(), square);
+        square.setDungeon(this);
+        square.setPos(pos);
         // TODO: Finish
     }
 
