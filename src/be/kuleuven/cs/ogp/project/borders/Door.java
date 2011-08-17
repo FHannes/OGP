@@ -14,26 +14,26 @@ public class Door extends Border {
     /**
      * The state of the door.
      */
-    private boolean open;
+    private boolean opened;
 
     /**
      * Creates a new instance of this class.
      *
-     * @param   open
+     * @param   opened
      *          The given state for the door.
      * @effect  The state of the door for the new object equals the given state.
-     *          | setOpen(open);
+     *          | setOpened(opened);
      */
-    public Door(boolean open) {
-        setOpen(open);
+    public Door(boolean opened) {
+        setOpened(opened);
     }
 
     /**
      * Returns true if a character can pass through this border.
      */
     @Override @Raw
-    public boolean canPassThrough() {
-        return open;
+    public boolean isOpen() {
+        return opened;
     }
 
     /**
@@ -55,16 +55,16 @@ public class Door extends Border {
     /**
      * Opens or closes the door in this border.
      *
-     * @param   open
-     *          The given open state.
+     * @param   opened
+     *          The given opened state.
      * @post    When opened, one can pass through the door, else one cannot.
-     *          | new.canPassThrough() == open
+     *          | new.isOpen() == opened
      */
     @Basic
-    public void setOpen(boolean open) {
-        this.open = open;
+    public void setOpened(boolean opened) {
+        this.opened = opened;
         if (getAdjacent() != null)
-            ((Door) getAdjacent()).setOpen(open);
+            ((Door) getAdjacent()).setOpened(opened);
     }
 
     /**
@@ -72,7 +72,15 @@ public class Door extends Border {
      */
     @Override
     public Object clone() {
-        return new Door(canPassThrough());
+        return new Door(isOpen());
+    }
+
+    /**
+     * Returns a string representation of the object.
+     */
+    @Override
+    public String toString() {
+        return "Door(opened:" + isOpen() + ")";
     }
 
 }

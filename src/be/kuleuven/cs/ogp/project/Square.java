@@ -598,4 +598,13 @@ public class Square {
         square.setBorder(border, dir.opposite());
     }
 
+    /**
+     * Returns a string representation of the object.
+     */
+    @Override
+    public String toString() {
+        return "Square(temp:" + getTemp() + ";humidity:" + getHumidity() + ";slippery:" + isSlipperyFloor() + ";pos:" +
+            getPos() + ")";
+    }
+
 }

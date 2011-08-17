@@ -2,7 +2,6 @@ package be.kuleuven.cs.ogp.project.tools;
 
 import be.kuleuven.cs.ogp.project.Square;
 import be.kuleuven.cs.som.annotate.Basic;
-import sun.security.util.BigInt;
 
 /**
  * This class holds a 3 dimensional coordinate set.
@@ -164,7 +163,7 @@ public class Point3D {
      */
     @Override
     public String toString() {
-        return "Point3D(" + getX() + ", " + getY() + ", " + getZ() + ")";
+        return "Point3D(x:" + getX() + ";y:" + getY() + ";z:" + getZ() + ")";
     }
 
 }

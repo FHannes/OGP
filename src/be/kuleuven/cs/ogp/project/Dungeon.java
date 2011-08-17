@@ -274,6 +274,18 @@ public class Dungeon {
     }
 
     /**
+     * Checks whether a square is present in the dungeon at the provided location.
+     *
+     * @param   pos
+     *          The given position.
+     * @return  Returns false if pos is invalid or if the position does not contain a square.
+     *          | result == ((pos != null) && this.getSquares().containsKey(pos))
+     */
+    public boolean hasSquare(Point3D pos) {
+        return (pos != null) && this.getSquares().containsKey(pos);
+    }
+
+    /**
      * Adds a square to the dungeon.
      *
      * @param   square

@@ -15,7 +15,7 @@ public class PlasticFoil extends Border {
      * Returns true if a character can pass through this border.
      */
     @Override
-    public boolean canPassThrough() {
+    public boolean isOpen() {
         return torn;
     }
 
@@ -51,9 +51,17 @@ public class PlasticFoil extends Border {
     @Override
     public Object clone() {
         PlasticFoil pf = new PlasticFoil();
-        if (canPassThrough())
+        if (isOpen())
             pf.tear();
         return pf;
+    }
+
+    /**
+     * Returns a string representation of the object.
+     */
+    @Override
+    public String toString() {
+        return "PlasticFoil(torn:" + isOpen() + ")";
     }
 
 }

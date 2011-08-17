@@ -17,6 +17,7 @@ public class Main {
 
         sq = d.getSquare(pos);
 
+        System.out.println(sq);
         System.out.println(sq.getBorder(Direction.NORTH.opposite()).toString());
     }
 

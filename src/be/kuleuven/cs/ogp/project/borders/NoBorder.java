@@ -13,7 +13,7 @@ public class NoBorder extends Border {
      * Returns true if a character can pass through this border.
      */
     @Override
-    public boolean canPassThrough() {
+    public boolean isOpen() {
         return true;
     }
 
@@ -39,6 +39,14 @@ public class NoBorder extends Border {
     @Override
     public Object clone() {
         return new NoBorder();
+    }
+
+    /**
+     * Returns a string representation of the object.
+     */
+    @Override
+    public String toString() {
+        return "NoBorder()";
     }
 
 }

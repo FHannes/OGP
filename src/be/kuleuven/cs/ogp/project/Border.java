@@ -22,7 +22,7 @@ public abstract class Border {
     /**
      * Returns true if a character can pass through this adjacent.
      */
-    public abstract boolean canPassThrough();
+    public abstract boolean isOpen();
 
     /**
      * Returns true if the adjacent is slippery.

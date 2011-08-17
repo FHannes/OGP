@@ -30,7 +30,7 @@ public class Wall extends Border {
      * Returns true if a character can pass through this border.
      */
     @Override
-    public boolean canPassThrough() {
+    public boolean isOpen() {
         return false;
     }
 
@@ -56,6 +56,14 @@ public class Wall extends Border {
     @Override
     public Object clone() {
         return new Wall(isSlippery());
+    }
+
+    /**
+     * Returns a string representation of the object.
+     */
+    @Override
+    public String toString() {
+        return "Wall(slippery:" + isSlippery() + ")";
     }
 
 }

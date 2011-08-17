@@ -4,7 +4,7 @@
     behoudt zijn eigen waarden, tenzij ze expliciet worden aangepast met de daarote voorziene methodes.
 
 3. Er moet een nieuw soort begrenzing worden teogevoegd. Die begrenzing bestaat uit een plastic folie. Ze is gesloten
-    tot de folie gescheurd wordt. Vanaf dan is ze open.
+    tot de folie gescheurd wordt. Vanaf dan is ze opened.
 
 4. De hoeveelheid geheugen die door een plateau of een schacht wordt ingenomen moet recht evenredig zijn met het aantal
     vakjes.
