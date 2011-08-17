@@ -23,7 +23,7 @@ import java.util.Map;
  *
  * @author  Frederic Hannes
  */
-public class Dungeon {
+public class Dungeon<T extends Square> {
 
     /**
      * The maximum allowed fraction of squares with a slippery floor in the dungeon.
@@ -48,22 +48,22 @@ public class Dungeon {
     /**
      * The size of the X dimension.
      */
-    private long xDim;
+    private long xDim = 0;
 
     /**
      * The size of the Y dimension.
      */
-    private long yDim;
+    private long yDim = 0;
 
     /**
      * The size of the Z dimension.
      */
-    private long zDim;
+    private long zDim = 0;
 
     /**
      * The map containing all of the squares in the dungeon.
      */
-    private Map<Point3D, Square> squares = new HashMap<>();
+    private Map<Point3D, T> squares = new HashMap<>();
 
     /**
      * Creates a new instance of dungeon.
@@ -72,18 +72,11 @@ public class Dungeon {
      *          | setXDimMax(Long.MAX_VALUE)
      *          | setYDimMax(Long.MAX_VALUE)
      *          | setZDimMax(Long.MAX_VALUE)
-     * @effect  Sets the current dungeon dimensions to 0.
-     *          | setXDim(0)
-     *          | setYDim(0)
-     *          | setZDim(0)
      */
     public Dungeon() {
         setXDimMax(Long.MAX_VALUE);
         setYDimMax(Long.MAX_VALUE);
         setZDimMax(Long.MAX_VALUE);
-        setXDim(0);
-        setYDim(0);
-        setZDim(0);
     }
 
     /**
@@ -199,7 +192,7 @@ public class Dungeon {
      *          | yDim > this.getYDimMax()
      */
     @Model @Raw
-    public final void setYDim(long yDim) throws IllegalArgumentException {
+    private final void setYDim(long yDim) throws IllegalArgumentException {
         if (yDim < this.getYDim())
             throw new IllegalArgumentException("The new Y dimension has to be larger than the old one!");
         if (yDim > this.getYDimMax())
@@ -228,7 +221,7 @@ public class Dungeon {
      *          | zDim > this.getZDimMax()
      */
     @Model @Raw
-    public final void setZDim(long zDim) throws IllegalArgumentException {
+    private final void setZDim(long zDim) throws IllegalArgumentException {
         if (zDim < this.getZDim())
             throw new IllegalArgumentException("The new Z dimension has to be larger than the old one!");
         if (zDim > this.getZDimMax())
@@ -254,7 +247,7 @@ public class Dungeon {
      * Returns the map containing all of the dungeon's squares.
      */
     @Model
-    private Map<Point3D, Square> getSquares() {
+    private Map<Point3D, T> getSquares() {
         return squares;
     }
 
@@ -281,7 +274,7 @@ public class Dungeon {
      * @return  Returns the square square at the given position.
      *          | result == this.getSquares().get(pos)
      */
-    public Square getSquare(Point3D pos) {
+    public T getSquare(Point3D pos) {
         if (!hasSquare(pos))
             return null;
         return this.getSquares().get(pos);
@@ -324,7 +317,7 @@ public class Dungeon {
      *          | square.setDungeon(this)
      *          | square.setPos(pos)
      */
-    public void addSquare(Square square, Point3D pos) throws IllegalArgumentException {
+    public void addSquare(T square, Point3D pos) throws IllegalArgumentException {
         if (square == null)
             throw new IllegalArgumentException("Invalid square!");
         if (square.getDungeon() != null)
@@ -370,10 +363,10 @@ public class Dungeon {
      * @return  The square that was removed from the dungeon.
      *          result == getSquare(pos)
      */
-    public Square removeSquare(Point3D pos) throws IllegalArgumentException {
+    public T removeSquare(Point3D pos) throws IllegalArgumentException {
         if (!isValidPos(pos))
             throw new IllegalArgumentException("Invalid position!");
-        Square old = getSquare(pos);
+        T old = getSquare(pos);
         if (old != null) {
             old.unlink();
             getSquares().remove(pos);
@@ -394,52 +387,52 @@ public class Dungeon {
         return isValidPos(pos) && (pos.getX() < getXDim()) && (pos.getY() < getYDim()) && (pos.getZ() < getZDim());
     }
 
-	/**
-	 * Fills a list with all squares belonging to a space at a certain position. Time complexity of O(6n).
-	 *
-	 * @param	space
-	 * 			The given space list.
-	 * @param	pos
-	 * 			The given position.
-	 */
-	@Model
-	private void getSpace(List<Square> space, Point3D pos) {
-		Square sq = getSquare(pos);
-		if (sq == null || space.contains(sq) || !insideDimensions(pos))
-			return;
-		space.add(sq);
+    /**
+     * Fills a list with all squares belonging to a space at a certain position. Time complexity of O(6n).
+     *
+     * @param	space
+     * 			The given space list.
+     * @param	pos
+     * 			The given position.
+     */
+    @Model
+    private void getSpace(List<Square> space, Point3D pos) {
+        Square sq = getSquare(pos);
+        if (sq == null || space.contains(sq) || !insideDimensions(pos))
+            return;
+        space.add(sq);
         for (Direction dir : Direction.values()) {
             Point3D next = dir.move(pos);
             Square neighbour = getSquare(next);
             if ((neighbour != null) && (sq.getBorder(dir).isOpen()))
                 getSpace(space, next);
         }
-	}
+    }
 
-	/**
-	 * Creates a list containing all squares belonging to a space at a certain
-	 * coordinate set.
-	 *
-	 * @param	pos
-	 * 			The given position.
-	 * @throws	IllegalArgumentException
-	 * 			Throws an illegal argument exception when the given position are invalid.
-	 * 			| !isValidPos(pos)
-	 * @throws	IllegalArgumentException
-	 * 			Throws an illegal argument exception when the given position does not match a square.
-	 * @return	The list with the space.
-	 * 			| space = new ArrayList<>()
-	 * 			| getSpace(space, pos)
-	 * 			| result == space
-	 */
-	public List<Square> getSpace(Point3D pos) {
-		if (!isValidPos(pos))
-			throw new IllegalArgumentException("Invalid position!");
-		if (!hasSquare(pos))
-			throw new IllegalArgumentException("There's no square at the given position!");
-		List<Square> space = new ArrayList<>();
-		getSpace(space, pos);
-		return space;
-	}
+    /**
+     * Creates a list containing all squares belonging to a space at a certain
+     * coordinate set.
+     *
+     * @param	pos
+     * 			The given position.
+     * @throws	IllegalArgumentException
+     * 			Throws an illegal argument exception when the given position are invalid.
+     * 			| !isValidPos(pos)
+     * @throws	IllegalArgumentException
+     * 			Throws an illegal argument exception when the given position does not match a square.
+     * @return	The list with the space.
+     * 			| space = new ArrayList<>()
+     * 			| getSpace(space, pos)
+     * 			| result == space
+     */
+    public List<Square> getSpace(Point3D pos) {
+        if (!isValidPos(pos))
+            throw new IllegalArgumentException("Invalid position!");
+        if (!hasSquare(pos))
+            throw new IllegalArgumentException("There's no square at the given position!");
+        List<Square> space = new ArrayList<>();
+        getSpace(space, pos);
+        return space;
+    }
 
 }
