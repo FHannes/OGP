@@ -2,6 +2,7 @@ package be.kuleuven.cs.ogp.project.tools;
 
 import be.kuleuven.cs.ogp.project.Square;
 import be.kuleuven.cs.som.annotate.Basic;
+import sun.security.util.BigInt;
 
 /**
  * This class holds a 3 dimensional coordinate set.
@@ -10,9 +11,9 @@ import be.kuleuven.cs.som.annotate.Basic;
  */
 public class Point3D {
 
-	private long x;
-	private long y;
-	private long z;
+	private int x;
+	private int y;
+	private int z;
 
 	/**
 	 * Initializes this 3 dimensional point with given x, y and z values.
@@ -24,7 +25,7 @@ public class Point3D {
 	 * @effect	The given z-coordinate is set as the new z-coordinate.
 	 * 			| setZ(z)
 	 */
-	public Point3D(long x, long y, long z) {
+	public Point3D(int x, int y, int z) {
 		setX(x);
 		setY(y);
 		setZ(z);
@@ -34,7 +35,7 @@ public class Point3D {
 	 * Return the x-coordinate stored in the object.
 	 */
 	@Basic
-	public long getX() {
+	public int getX() {
 		return x;
 	}
 
@@ -47,7 +48,7 @@ public class Point3D {
 	 * 			| new.getX() == x
 	 */
 	@Basic
-	public void setX(long x) {
+	public void setX(int x) {
 		this.x = x;
 	}
 
@@ -55,7 +56,7 @@ public class Point3D {
 	 * Return the y-coordinate stored in the object.
 	 */
 	@Basic
-	public long getY() {
+	public int getY() {
 		return y;
 	}
 
@@ -68,7 +69,7 @@ public class Point3D {
 	 * 			| new.getY() == y
 	 */
 	@Basic
-	public void setY(long y) {
+	public void setY(int y) {
 		this.y = y;
 	}
 
@@ -76,7 +77,7 @@ public class Point3D {
 	 * Return the z-coordinate stored in the object.
 	 */
 	@Basic
-	public long getZ() {
+	public int getZ() {
 		return z;
 	}
 
@@ -89,7 +90,7 @@ public class Point3D {
 	 * 			| new.getZ() == z
 	 */
 	@Basic
-	public void setZ(long z) {
+	public void setZ(int z) {
 		this.z = z;
 	}
 
@@ -110,9 +111,9 @@ public class Point3D {
     public double dist(Point3D pos) throws IllegalArgumentException {
         if (pos == null)
             throw new IllegalArgumentException("Invalid point!");
-        long x = this.getX() + pos.getX();
-        long y = this.getY() + pos.getY();
-        long z = this.getZ() + pos.getZ();
+        int x = this.getX() + pos.getX();
+        int y = this.getY() + pos.getY();
+        int z = this.getZ() + pos.getZ();
         return Math.sqrt(x * x + y * y + z * z);
     }
 
@@ -146,10 +147,16 @@ public class Point3D {
 
     /**
      * Returns a hash code value for the object.
+     *
+     * @note    Algorithm from Effective Java by Joshua Bloch.
      */
     @Override
     public int hashCode() {
-        return new Long(getX()).hashCode() + new Long(getY()).hashCode() + new Long(getZ()).hashCode();
+        int res = 17;
+        res = 37 * res + (getX() ^ (getX() >> 32));
+        res = 37 * res + (getY() ^ (getY() >> 32));
+        res = 37 * res + (getZ() ^ (getZ() >> 32));
+        return res;
     }
 
     /**

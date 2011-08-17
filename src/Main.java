@@ -3,11 +3,10 @@ import be.kuleuven.cs.ogp.project.Dungeon;
 import be.kuleuven.cs.ogp.project.Square;
 import be.kuleuven.cs.ogp.project.borders.Wall;
 import be.kuleuven.cs.ogp.project.tools.Point3D;
-import org.omg.CORBA._PolicyStub;
 
 public class Main {
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
         Dungeon d = new Dungeon();
         Square sq = new Square();
         d.addSquare(sq, new Point3D(1, 6, 3));
@@ -19,6 +18,6 @@ public class Main {
         sq = d.getSquare(pos);
 
         System.out.println(sq.getBorder(Direction.NORTH.opposite()).toString());
-	}
+    }
 
 }
