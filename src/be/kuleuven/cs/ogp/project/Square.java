@@ -8,6 +8,7 @@ import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -489,9 +490,12 @@ public class Square {
             if (getBorders().containsKey(dir)) {
                 Border old = updateBorder(border, dir);
                 if (old.getAdjacent() != null) {
+                    Border newBorder = (Border) border.clone();
+                    border.setAdjacent(newBorder);
+                    newBorder.setAdjacent(border);
                     Square neighbour = old.getAdjacent().getSquare();
                     old.setAdjacent(null);
-                    old = neighbour.updateBorder((Border) border.clone(), dir.opposite());
+                    old = neighbour.updateBorder(newBorder, dir.opposite());
                     old.setAdjacent(null);
                 }
             } else {
@@ -596,6 +600,49 @@ public class Square {
         // Link the squares
         this.setBorder(border, dir);
         square.setBorder(border, dir.opposite());
+        Border newBorder = this.getBorder(dir);
+        Border newBorder2 = square.getBorder(dir.opposite());
+        newBorder.setAdjacent(newBorder2);
+        newBorder.setSquare(this);
+        newBorder2.setAdjacent(newBorder);
+        newBorder2.setSquare(square);
+    }
+
+    /**
+     * Internal method to unlink a square from it's dungeon and all neighbouring squares.
+     *
+     * @post    The square is no longer linked to it's dungeon.
+     *          | new.getDungeon() == null
+     */
+    void unlink() {
+        for (Direction dir : Direction.values()) {
+            Border border = getBorder(dir);
+            if (border.getAdjacent() != null)
+                border.getAdjacent().setAdjacent(null);
+            border.setAdjacent(null);
+        }
+        setDungeon(null);
+        setPos(null);
+    }
+
+    /**
+     * Checks whether a square can be reached from this square. The time complexity of this method is O(6n) as it uses
+     * the getSpace() method in Dungeon which also has this time complexity.
+     *
+     * @param   square
+     *          The given square.
+     * @return  Returns false if the current square does not belong to a dungeon.
+     *          | if (getDungeon() == null)
+     *          |   result == false
+     * @return  If the current square belongs to a dungeon, returns true if the given square can be reached from it.
+     *          | space = getDungeon().getSpace(getPos())
+     *          |   space.contains(square)
+     */
+    public boolean canReach(Square square) {
+        if (getDungeon() == null)
+            return false;
+        List<Square> space = getDungeon().getSpace(getPos());
+        return space.contains(square);
     }
 
     /**

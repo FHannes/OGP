@@ -5,6 +5,8 @@ import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,7 +170,7 @@ public class Dungeon {
      *          | xDim > this.getXDimMax()
      */
     @Model @Raw
-    private final void setXDim(long xDim) throws IllegalArgumentException {
+    private void setXDim(long xDim) throws IllegalArgumentException {
         if (xDim < this.getXDim())
             throw new IllegalArgumentException("The new X dimension has to be larger than the old one!");
         if (xDim > this.getXDimMax())
@@ -257,23 +259,6 @@ public class Dungeon {
     }
 
     /**
-     * Gets the square at a certain position.
-     *
-     * @param   pos
-     *          The given position.
-     * @return  Returns null if the position is invalid or no square is assigned to it in the dungeon.
-     *          | if ((pos == null) || (!this.getSquares().containsKey(pos)))
-     *          |   result == null
-     * @return  Returns the square square at the given position.
-     *          | result == this.getSquares().get(pos)
-     */
-    public Square getSquare(Point3D pos) {
-        if ((pos == null) || (!this.getSquares().containsKey(pos)))
-            return null;
-        return this.getSquares().get(pos);
-    }
-
-    /**
      * Checks whether a square is present in the dungeon at the provided location.
      *
      * @param   pos
@@ -283,6 +268,23 @@ public class Dungeon {
      */
     public boolean hasSquare(Point3D pos) {
         return (pos != null) && this.getSquares().containsKey(pos);
+    }
+
+    /**
+     * Gets the square at a certain position.
+     *
+     * @param   pos
+     *          The given position.
+     * @return  Returns null if the position is invalid or no square is assigned to it in the dungeon.
+     *          | if (!hasSquare(pos))
+     *          |   result == null
+     * @return  Returns the square square at the given position.
+     *          | result == this.getSquares().get(pos)
+     */
+    public Square getSquare(Point3D pos) {
+        if (!hasSquare(pos))
+            return null;
+        return this.getSquares().get(pos);
     }
 
     /**
@@ -356,5 +358,88 @@ public class Dungeon {
                 square.link(neighbour, dir);
         }
     }
+
+    /**
+     * Removes the square at a given position and returns it.
+     *
+     * @param   pos
+     *          The given position.
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the given position is invalid.
+     *          | !isValidPos(pos)
+     * @return  The square that was removed from the dungeon.
+     *          result == getSquare(pos)
+     */
+    public Square removeSquare(Point3D pos) throws IllegalArgumentException {
+        if (!isValidPos(pos))
+            throw new IllegalArgumentException("Invalid position!");
+        Square old = getSquare(pos);
+        if (old != null) {
+            old.unlink();
+            getSquares().remove(pos);
+        }
+        return old;
+    }
+
+    /**
+     * Checks whether a coordinate is inside of the dungeon's dimensions.
+     *
+     * @param   pos
+     *          The given coordinate.
+     * @return  True if the coordinate is found inside of the given dimensions.
+     *          | result == isValidPos(pos) && (pos.getX() < getXDim()) && (pos.getY() < getYDim()) && (pos.getZ() <
+     *          |   getZDim())
+     */
+    public boolean insideDimensions(Point3D pos) {
+        return isValidPos(pos) && (pos.getX() < getXDim()) && (pos.getY() < getYDim()) && (pos.getZ() < getZDim());
+    }
+
+	/**
+	 * Fills a list with all squares belonging to a space at a certain position. Time complexity of O(6n).
+	 *
+	 * @param	space
+	 * 			The given space list.
+	 * @param	pos
+	 * 			The given position.
+	 */
+	@Model
+	private void getSpace(List<Square> space, Point3D pos) {
+		Square sq = getSquare(pos);
+		if (sq == null || space.contains(sq) || !insideDimensions(pos))
+			return;
+		space.add(sq);
+        for (Direction dir : Direction.values()) {
+            Point3D next = dir.move(pos);
+            Square neighbour = getSquare(next);
+            if ((neighbour != null) && (sq.getBorder(dir).isOpen()))
+                getSpace(space, next);
+        }
+	}
+
+	/**
+	 * Creates a list containing all squares belonging to a space at a certain
+	 * coordinate set.
+	 *
+	 * @param	pos
+	 * 			The given position.
+	 * @throws	IllegalArgumentException
+	 * 			Throws an illegal argument exception when the given position are invalid.
+	 * 			| !isValidPos(pos)
+	 * @throws	IllegalArgumentException
+	 * 			Throws an illegal argument exception when the given position does not match a square.
+	 * @return	The list with the space.
+	 * 			| space = new ArrayList<>()
+	 * 			| getSpace(space, pos)
+	 * 			| result == space
+	 */
+	public List<Square> getSpace(Point3D pos) {
+		if (!isValidPos(pos))
+			throw new IllegalArgumentException("Invalid position!");
+		if (!hasSquare(pos))
+			throw new IllegalArgumentException("There's no square at the given position!");
+		List<Square> space = new ArrayList<>();
+		getSpace(space, pos);
+		return space;
+	}
 
 }

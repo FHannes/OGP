@@ -42,7 +42,7 @@ public class PlasticFoil extends Border {
     public void tear() {
         torn = true;
         if (getAdjacent() != null)
-            ((PlasticFoil) getAdjacent()).tear();
+            ((PlasticFoil) getAdjacent()).torn = true;
     }
 
     /**

@@ -64,7 +64,7 @@ public class Door extends Border {
     public void setOpened(boolean opened) {
         this.opened = opened;
         if (getAdjacent() != null)
-            ((Door) getAdjacent()).setOpened(opened);
+            ((Door) getAdjacent()).opened = opened;
     }
 
     /**

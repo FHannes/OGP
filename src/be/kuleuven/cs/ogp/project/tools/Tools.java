@@ -38,10 +38,7 @@ public class Tools {
      * @return  Returns false if the value is smaller than
      */
 	public static boolean isPow2(int value) {
-		if (value <= 0)
-			return false;
-		else
-			return (value & (value - 1)) == 0;
+        return (value > 0) && (value & (value - 1)) == 0;
 	}
 
 }
