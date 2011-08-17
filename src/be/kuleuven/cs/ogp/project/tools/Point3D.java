@@ -1,5 +1,6 @@
 package be.kuleuven.cs.ogp.project.tools;
 
+import be.kuleuven.cs.ogp.project.Square;
 import be.kuleuven.cs.som.annotate.Basic;
 
 /**
@@ -91,6 +92,29 @@ public class Point3D {
 	public void setZ(long z) {
 		this.z = z;
 	}
+
+    /**
+     * Calculates the distance between the current point and a given point.
+     *
+     * @param   pos
+     *          The given point.
+     * @return  Returns the distance between this point and the given point.
+     *          | x = this.getX() + pos.getX()
+     *          | y = this.getY() + pos.getY()
+     *          | z = this.getZ() + pos.getZ()
+     *          | result == Math.sqrt(x * x + y * y + z * z)
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the given point is invalid.
+     *          | pos == null
+     */
+    public double dist(Point3D pos) throws IllegalArgumentException {
+        if (pos == null)
+            throw new IllegalArgumentException("Invalid point!");
+        long x = this.getX() + pos.getX();
+        long y = this.getY() + pos.getY();
+        long z = this.getZ() + pos.getZ();
+        return Math.sqrt(x * x + y * y + z * z);
+    }
 
     /**
      * Creates and returns a copy of this object.

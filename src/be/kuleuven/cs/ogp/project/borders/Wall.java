@@ -42,4 +42,12 @@ public class Wall extends Border {
         return slippery;
     }
 
+    /**
+     * Returns true if the given border will override this border when merged.
+     */
+    @Override
+    public boolean overridden(Border border) {
+        return false;
+    }
+
 }
