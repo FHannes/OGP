@@ -1,6 +1,8 @@
 package be.kuleuven.cs.ogp.project;
 
+import be.kuleuven.cs.ogp.project.borders.Door;
 import be.kuleuven.cs.ogp.project.borders.NoBorder;
+import be.kuleuven.cs.ogp.project.borders.Wall;
 import be.kuleuven.cs.ogp.project.tools.Point3D;
 import be.kuleuven.cs.ogp.project.tools.Tools;
 import be.kuleuven.cs.som.annotate.Basic;
@@ -92,37 +94,49 @@ public class Square {
     private boolean slipperyFloor;
 
     /**
+     * Imposes the class invariant restrictions of the subclasses.
+     */
+    private boolean restricted = false;
+
+    /**
      * Contains all of the borders of the square.
      */
     private Map<Direction, Border> borders = new HashMap<>();
 
     /**
-     * Creates a new instance of a square.
+     * Creates a new instance of a square with a given temperature and humidity.
      *
-     * @effect  Sets the given temperature to 0°C by default.
-     *          | setTemp(0)
-     * @effect  Sets the given humidity 0 by default.
-     *          | setHumidity(0)
+     * @param   temp
+     *          The given temperature.
+     * @param   humidity
+     *          The given humidity.
      * @effect  Sets the floor to being not slippery by default.
      *          | setSlipperyFloor(false)
-     * @effect  Sets the borders to being all inactive by default.
-     *          | setBorder(new NoBorder(), Direction.NORTH)
-     *          | setBorder(new NoBorder(), Direction.EAST)
-     *          | setBorder(new NoBorder(), Direction.SOUTH)
-     *          | setBorder(new NoBorder(), Direction.WEST)
-     *          | setBorder(new NoBorder(), Direction.CEILING)
-     *          | setBorder(new NoBorder(), Direction.FLOOR)
+     * @effect  Sets the given temperature as the object's temperature.
+     *          | setTemp(temp)
+     * @effect  Sets the given humidity as the object's humidity.
+     *          | setHumidity(humidity)
+     * @effect  Sets all borders to NoBorder by default except those specified by dirs.
+     *          | if ((dirs == null) || (!dirs.contains(dir)))
+     *          |   setBorder(new NoBorder(), dir)
+     * @effect  Sets all borders specified by dirs to a random wall or door.
+     *          | if ((dirs != null) && (dirs.contains(dir)))
+     *          |   if (Tools.randBool())
+     *          |       setBorder(new Wall(Tools.randBool()), dir)
+     *          |   else setBorder(new Door(Tools.randBool()), dir)
      */
-    public Square() {
-        setTemp(0);
-        setHumidity(0);
+    public Square(int temp, double humidity, List<Direction> dirs) {
+        setTemp(temp);
+        setHumidity(humidity);
         setSlipperyFloor(false);
-        setBorder(new NoBorder(), Direction.NORTH);
-        setBorder(new NoBorder(), Direction.EAST);
-        setBorder(new NoBorder(), Direction.SOUTH);
-        setBorder(new NoBorder(), Direction.WEST);
-        setBorder(new NoBorder(), Direction.CEILING);
-        setBorder(new NoBorder(), Direction.FLOOR);
+        for (Direction dir : Direction.values())
+            if ((dirs != null) && (dirs.contains(dir))) {
+                if (Tools.randBool())
+                    setBorder(new Wall(Tools.randBool()), dir);
+                else
+                    setBorder(new Door(Tools.randBool()), dir);
+            } else
+                setBorder(new NoBorder(), dir);
     }
 
     /**
@@ -132,17 +146,21 @@ public class Square {
      *          The given temperature.
      * @param   humidity
      *          The given humidity.
-     * @effect  Creates the instance with all of the default settings.
-     *          | this();
-     * @effect  Sets the given temperature as the object's temperature.
-     *          | setTemp(temp)
-     * @effect  Sets the given humidity as the object's humidity.
-     *          | setHumidity(humidity)
+     * @effect  Creates the instance with the default settings except for temperature and humidity.
+     *          | this(temp, humidity, null);
      */
     public Square(int temp, double humidity) {
-        this();
-        setTemp(temp);
-        setHumidity(humidity);
+        this(temp, humidity, null);
+    }
+
+    /**
+     * Creates a new instance of a square.
+     *
+     * @effect  Creates the instance with the default settings.
+     *          | this(0, 0, null);
+     */
+    public Square() {
+        this(0, 0, null);
     }
 
     /**
@@ -211,18 +229,32 @@ public class Square {
     /**
      * Assigns a new temperature to the object given by temperature.
      *
+     * @param   temp
+     *          The given temperature.
      * @post    The new temperature of the object equals the given temperature.
      *          | new.getTemperature() == temp
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception when the given temperature is not valid.
+     *          | !isValidTemp(temp)
      * @throws  IllegalArgumentException
      *          Throws an illegal argument exception when the given temperature is not valid.
      *          | !isValidTemp(temp)
      */
     @Basic
     public void setTemp(int temp) throws IllegalArgumentException {
+        if (!canChangeTemp())
+            throw new IllegalArgumentException("Can't change temperature!");
         if (isValidTemp(temp))
             this.temp = temp;
         else
             throw new IllegalArgumentException("Invalid temperature given!");
+    }
+
+    /**
+     * Returns true if you can change the temperature of the square. This method can be overridden in subclasses.
+     */
+    public boolean canChangeTemp() {
+        return true;
     }
 
     /**
@@ -330,15 +362,15 @@ public class Square {
     /**
      * Sets the current humidity of the square.
      *
-     * @pre     The value for humidity must be valid.
-     *          | isValidHumidity(humidity) == true
+     * @pre     The value for humidity must be valid and changing the humidity must be allowed.
+     *          | (isValidHumidity(humidity) && canChangeHumidity()) == true
      * @param   humidity
      *          The given humidity.
      * @post    The new humidity equals the given humidity.
      *          | new.getHumidity() == humidity
      */
     public void setHumidity(double humidity) {
-        assert(isValidHumidity(humidity));
+        assert(isValidHumidity(humidity) && canChangeHumidity());
         this.humidity = Tools.roundTo(humidity, 2);
     }
 
@@ -352,6 +384,13 @@ public class Square {
      */
     public static boolean isValidHumidity(double humidity) {
         return (humidity >= 0) && (humidity <= 100);
+    }
+
+    /**
+     * Returns true if you can change the humidity of the square. This method can be overridden in subclasses.
+     */
+    public boolean canChangeHumidity() {
+        return true;
     }
 
     /**
@@ -485,7 +524,7 @@ public class Square {
      *          | new.getBorder(dir) == border
      */
     public void setBorder(Border border, Direction dir) {
-        if ((border != null) && (dir != null)) {
+        if ((border != null) && (dir != null) && canChangeBorder()) {
             border = (Border) border.clone();
             if (getBorders().containsKey(dir)) {
                 Border old = updateBorder(border, dir);
@@ -503,6 +542,13 @@ public class Square {
                 border.setSquare(this);
             }
         }
+    }
+
+    /**
+     * Returns true if you can change the borders of the square. This method can be overridden in subclasses.
+     */
+    public boolean canChangeBorder() {
+        return true;
     }
 
     /**
@@ -557,6 +603,11 @@ public class Square {
     }
 
     /**
+     * Is called when the square is linked to a neighbour. Should be overridden in subclasses.
+     */
+    protected void linked() { }
+
+    /**
      * Internal method to link 2 squares together.
      *
      * @pre     Before calling this method both squares have to have their coordinates and dungeon set to allow the
@@ -578,6 +629,11 @@ public class Square {
      * @throws  IllegalArgumentException
      *          Throws an illegal argument exception if the squares are not next to each other in the given direction.
      *          | !square.getPos().equals(dir.move(this.getPos()))
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the squares have a different type of border and both can't have
+     *          their borders modified.
+     *          | !(border.getClass().getName().equals(border2.getClass().getName())) && !(this.canChangeBorder() &&
+     *          |   square.canChangeBorder())
      * @post    The squares now share a linked border.
      *          | new.getBorder(dir).getAdjacent().getSquare().equals(square)
      */
@@ -595,8 +651,14 @@ public class Square {
         // Determine the proper border to place between both squares
         Border border = this.getBorder(dir);
         Border border2 = square.getBorder(dir.opposite());
-        if (!border2.overridden(border))
-            border = border2;
+        if (!(border.getClass().getName().equals(border2.getClass().getName()))) {
+            if (this.canChangeBorder() && !square.canChangeBorder())
+                border = border2;
+            else if (!(this.canChangeBorder() && square.canChangeBorder()))
+                throw new IllegalArgumentException("Can't change the border of 2 new neighbouring squares!");
+            else if (!border2.overridden(border))
+                border = border2;
+        }
         // Link the squares
         this.setBorder(border, dir);
         square.setBorder(border, dir.opposite());
@@ -606,6 +668,9 @@ public class Square {
         newBorder.setSquare(this);
         newBorder2.setAdjacent(newBorder);
         newBorder2.setSquare(square);
+        // Notify both squares that they're linked
+        this.linked();
+        square.linked();
     }
 
     /**
@@ -643,6 +708,27 @@ public class Square {
             return false;
         List<Square> space = getDungeon().getSpace(getPos());
         return space.contains(square);
+    }
+
+    /**
+     * Returns true if the restrictions of the subclass invariants currently apply. This should always be true if an
+     * end-user calls this method.
+     */
+    protected boolean isRestricted() {
+        return restricted;
+    }
+
+    /**
+     * Sets whether the restrictions of subclass invariants currently apply. This allows internal classes to change the
+     * properties of these subclasses when needed.
+     *
+     * @param   restricted
+     *          The given restricted flag.
+     * @post    The new restricted flag equals the given restricted flag.
+     *          | new.isRestricted() == restricted
+     */
+    protected void setRestricted(boolean restricted) {
+        this.restricted = restricted;
     }
 
     /**

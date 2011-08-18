@@ -38,7 +38,7 @@ public abstract class Border {
      * Return the square the adjacent is linked to.
      */
     @Basic
-    Square getSquare() {
+    public Square getSquare() {
         return square;
     }
 
@@ -65,7 +65,7 @@ public abstract class Border {
      * Returns the adjacent on the other side of the edge between it's square and the adjacent one.
      */
     @Basic
-    protected Border getAdjacent() {
+    public Border getAdjacent() {
         return adjacent;
     }
 
