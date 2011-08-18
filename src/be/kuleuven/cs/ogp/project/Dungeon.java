@@ -68,7 +68,7 @@ public class Dungeon<T extends Square> {
     /**
      * Creates a new instance of dungeon.
      *
-     * @effect  Sets the maximum dungeon dimensions to maximum value for Long.
+     * @effect  Sets the maximum dungeon dimensions to the maximum value for Long.
      *          | setXDimMax(Long.MAX_VALUE)
      *          | setYDimMax(Long.MAX_VALUE)
      *          | setZDimMax(Long.MAX_VALUE)
@@ -388,12 +388,12 @@ public class Dungeon<T extends Square> {
     }
 
     /**
-     * Fills a list with all squares belonging to a space at a certain position. Time complexity of O(6n).
+     * Fills a list with all squares belonging to a space at a given position. Time complexity of O(6n).
      *
-     * @param	space
-     * 			The given space list.
-     * @param	pos
-     * 			The given position.
+     * @param   space
+     *          The given space list.
+     * @param   pos
+     *          The given position.
      */
     @Model
     private void getSpace(List<Square> space, Point3D pos) {
@@ -410,20 +410,19 @@ public class Dungeon<T extends Square> {
     }
 
     /**
-     * Creates a list containing all squares belonging to a space at a certain
-     * coordinate set.
+     * Creates a list containing all squares belonging to a space at a given position.
      *
-     * @param	pos
-     * 			The given position.
-     * @throws	IllegalArgumentException
-     * 			Throws an illegal argument exception when the given position are invalid.
-     * 			| !isValidPos(pos)
-     * @throws	IllegalArgumentException
-     * 			Throws an illegal argument exception when the given position does not match a square.
-     * @return	The list with the space.
-     * 			| space = new ArrayList<>()
-     * 			| getSpace(space, pos)
-     * 			| result == space
+     * @param   pos
+     *          The given position.
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception when the given position are invalid.
+     *          | !isValidPos(pos)
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception when the given position does not match a square.
+     * @return  The list with the space.
+     *          | space = new ArrayList<>()
+     *          | getSpace(space, pos)
+     *          | result == space
      */
     public List<Square> getSpace(Point3D pos) {
         if (!isValidPos(pos))

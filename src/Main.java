@@ -8,7 +8,7 @@ import be.kuleuven.cs.ogp.project.tools.Point3D;
 public class Main {
 
     public static void main(String[] args) {
-        Dungeon d = new Dungeon();
+        Dungeon<Square> d = new Dungeon<>();
         Square sq1 = new Square();
         d.addSquare(sq1, new Point3D(1, 6, 3));
         sq1.setBorder(new Wall(false), Direction.NORTH);
