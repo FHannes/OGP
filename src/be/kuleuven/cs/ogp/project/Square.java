@@ -3,15 +3,15 @@ package be.kuleuven.cs.ogp.project;
 import be.kuleuven.cs.ogp.project.borders.Door;
 import be.kuleuven.cs.ogp.project.borders.NoBorder;
 import be.kuleuven.cs.ogp.project.borders.Wall;
+import be.kuleuven.cs.ogp.project.squares.Teleport;
 import be.kuleuven.cs.ogp.project.tools.Point3D;
 import be.kuleuven.cs.ogp.project.tools.Tools;
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.xml.transform.Result;
+import java.util.*;
 
 /**
  * This class represents a square or tile in the game.
@@ -370,10 +370,10 @@ public class Square {
     /**
      * Sets the current humidity of the square.
      *
-     * @pre     The value for humidity must be valid and changing the humidity must be allowed.
-     *          | (isValidHumidity(humidity) && canChangeHumidity()) == true
      * @param   humidity
      *          The given humidity.
+     * @pre     The value for humidity must be valid and changing the humidity must be allowed.
+     *          | (isValidHumidity(humidity) && canChangeHumidity()) == true
      * @post    The new humidity equals the given humidity.
      *          | new.getHumidity() == humidity
      */
@@ -624,10 +624,10 @@ public class Square {
     /**
      * Internal method to link 2 squares together.
      *
-     * @pre     Before calling this method both squares have to have their coordinates and dungeon set to allow the
-     *          method to check whether they are next to each other and in the same dungeon.
      * @param   square
      *          The given square.
+     * @pre     Before calling this method both squares have to have their coordinates and dungeon set to allow the
+     *          method to check whether they are next to each other and in the same dungeon.
      * @throws  IllegalArgumentException
      *          Throws an illegal argument exception if the given square is invalid.
      *          | square == null
@@ -705,8 +705,8 @@ public class Square {
     }
 
     /**
-     * Checks whether a square can be reached from this square. The time complexity of this method is O(6n) as it uses
-     * the getSpace() method in Dungeon which also has this time complexity.
+     * Checks whether a square can be reached directly from this square. The time complexity of this method is O(6n) as
+     * it uses the getSpace() method in Dungeon which also has this time complexity.
      *
      * @param   square
      *          The given square.
@@ -720,12 +720,37 @@ public class Square {
      *          | space = getDungeon().getSpace(getPos())
      *          |   space.contains(square)
      */
-    public boolean canReach(Square square) {
+    public boolean canReachDirect(Square square) {
         if (getDungeon() == null)
             return false;
         if ((square == null) || (square.isSolid()))
             return false;
         List<Square> space = getDungeon().getSpace(getPos());
+        return space.contains(square);
+    }
+
+    /**
+     * Checks whether a square can be reached directly or though teleports from this square. The time complexity of this
+     * method is O(6n) as it uses the getTeleSpace() method in Dungeon which also has this time complexity.
+     *
+     * @param   square
+     *          The given square.
+     * @return  Returns false if the current square does not belong to a dungeon.
+     *          | if (getDungeon() == null)
+     *          |   result == false
+     * @return  Returns false if the given square is invalid or solid.
+     *          | if ((square == null) || (square.isSolid()))
+     *          |   result == false
+     * @return  If the current square belongs to a dungeon, returns true if the given square can be reached from it.
+     *          | space = getDungeon().getTeleSpace(getPos())
+     *          |   space.contains(square)
+     */
+    public boolean canReach(Square square) {
+        if (getDungeon() == null)
+            return false;
+        if ((square == null) || (square.isSolid()))
+            return false;
+        List<Square> space = getDungeon().getTeleSpace(getPos());
         return space.contains(square);
     }
 
@@ -755,6 +780,34 @@ public class Square {
      */
     public boolean isSolid() {
         return false;
+    }
+
+    /**
+     * Filters all squares of a certain class type from a list.
+     *
+     * @param   squares
+     *          The given list of squares.
+     * @param   clazz
+     *          The square class type.
+     * @return  If the squares list or the class type are not valid, the method returns null.
+     *          | if ((squares == null) && (clazz == null))
+     *          |   result == null
+     * @return  If the squares list and the class type are valid, the method creates a list containing all squares of
+     *          that type found in the given list.
+     *          | res = new ArrayList<>()
+     *          | for (sq : squares)
+     *          |   if (sq.getClass().getName().equals(clazz.getName()))
+     *          |       res.add(sq)
+     *          | result == res
+     */
+    public static List<Square> filter(List<Square> squares, Class<? extends Square> clazz) {
+        if ((squares == null) && (clazz == null))
+            return null;
+        List<Square> res = new ArrayList<>();
+        for (Square sq : squares)
+            if (sq.getClass().getName().equals(clazz.getName()))
+                res.add(sq);
+        return res;
     }
 
     /**

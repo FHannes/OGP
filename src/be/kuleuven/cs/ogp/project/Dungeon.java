@@ -1,5 +1,6 @@
 package be.kuleuven.cs.ogp.project;
 
+import be.kuleuven.cs.ogp.project.squares.Teleport;
 import be.kuleuven.cs.ogp.project.tools.Point3D;
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
@@ -394,19 +395,43 @@ public class Dungeon<T extends Square> {
      *          The given space list.
      * @param   pos
      *          The given position.
+     * @param   teleports
+     *          The flag which indicates whether or not to include teleport squares.
+     * @effect  If there's no square at the given position, the square is already part of the space or the given
+     *          position falls outside of the bounds of the dungeon, the method exits.
+     *          | if (sq == null || space.contains(sq) || !insideDimensions(pos))
+     *          |   return
+     * @effect  If the square is found and is not part of the space, it is added to the space?
+     *          | space.add(sq)
+     * @effect  All neighbours are being checked to see if they are part of the space.
+     *          | for (Direction dir : Direction.values()) {
+     *          |   next = dir.move(pos)
+     *          |   neighbour = getSquare(next)
+     *          |   if ((neighbour != null) && (sq.getBorder(dir).isOpen()))
+     *          |       getSpace(space, next, teleports) }
+     * @effect  If the teleport flag is set and the square at the given position is a teleport square, the spaces of the
+     *          destinations of the teleport are added to the space.
+     *          | if (teleports && (sq instanceof Teleport))
+     *          |   for (square : ((Teleport) sq).getDest())
+     *          |       getSpace(space, square.getPos(), teleports)
      */
     @Model
-    private void getSpace(List<Square> space, Point3D pos) {
+    private void getSpace(List<Square> space, Point3D pos, boolean teleports) {
+        if (!insideDimensions(pos))
+            return;
         Square sq = getSquare(pos);
-        if (sq == null || space.contains(sq) || !insideDimensions(pos))
+        if (sq == null || space.contains(sq))
             return;
         space.add(sq);
         for (Direction dir : Direction.values()) {
             Point3D next = dir.move(pos);
             Square neighbour = getSquare(next);
             if ((neighbour != null) && (sq.getBorder(dir).isOpen()))
-                getSpace(space, next);
+                getSpace(space, next, teleports);
         }
+        if (teleports && (sq instanceof Teleport))
+            for (Square square : ((Teleport) sq).getDest())
+                getSpace(space, square.getPos(), teleports);
     }
 
     /**
@@ -430,7 +455,33 @@ public class Dungeon<T extends Square> {
         if (!hasSquare(pos))
             throw new IllegalArgumentException("There's no square at the given position!");
         List<Square> space = new ArrayList<>();
-        getSpace(space, pos);
+        getSpace(space, pos, false);
+        return space;
+    }
+
+    /**
+     * Creates a list containing all squares belonging to a space at a given position and all spaces linked recursively
+     * to teleport squares in that space.
+     *
+     * @param   pos
+     *          The given position.
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception when the given position are invalid.
+     *          | !isValidPos(pos)
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception when the given position does not match a square.
+     * @return  The list with the space.
+     *          | space = new ArrayList<>()
+     *          | getSpace(space, pos)
+     *          | result == space
+     */
+    public List<Square> getTeleSpace(Point3D pos) {
+        if (!isValidPos(pos))
+            throw new IllegalArgumentException("Invalid position!");
+        if (!hasSquare(pos))
+            throw new IllegalArgumentException("There's no square at the given position!");
+        List<Square> space = new ArrayList<>();
+        getSpace(space, pos, true);
         return space;
     }
 

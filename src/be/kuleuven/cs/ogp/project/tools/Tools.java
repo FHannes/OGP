@@ -31,6 +31,18 @@ public class Tools {
 	}
 
     /**
+     * Returns a random number from the given range.
+     *
+     * @param   range
+     *          The given range.
+     * @return  A random number from 0 to range-1.
+     *          | result == Math.round(Math.random() * (range - 1))
+     */
+    public static int random(int range) {
+        return (int) Math.round(Math.random() * (range - 1));
+    }
+
+    /**
      * Checks whether an integer value is a power of 2.
      *
      * @param   value
