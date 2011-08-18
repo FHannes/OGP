@@ -8,6 +8,15 @@ import be.kuleuven.cs.ogp.project.borders.Wall;
 /**
  * This class represents a rock square.
  *
+ * @invar   The temperature of the square is always 0.
+ *          | this.getTemp() == 0
+ * @invar   The humidity of the square is the average of those surrounding it.
+ * @invar   All borders of the square are walls.
+ *          | for (dir : Direction.values())
+ *          |   (getBorder(dir) instanceof Wall) == true
+ * @invar   The square is solid, nothing can be placed in it.
+ *          | this.isSolid() == true
+ *
  * @author  Frederic Hannes
  */
 public class Rock extends Square {
