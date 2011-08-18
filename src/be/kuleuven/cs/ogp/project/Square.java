@@ -16,12 +16,18 @@ import java.util.Map;
 /**
  * This class represents a square or tile in the game.
  *
- * @invar  The temperature assigned to the square can not be smaller than -200°C or larger than 5000°C.
- *         | (this.getTemp() >= -200) && (this.getTemp() <= 5000)
- * @invar  The humidity value assigned to the square can never be smaller than 0 or larger than 100.
- *         | (this.getHumidity() >= 0) && (this.getHumidity() <= 100)
+ * @invar   The temperature assigned to the square can not be smaller than -200°C or larger than 5000°C.
+ *          | (this.getTemp() >= -200) && (this.getTemp() <= 5000)
+ * @invar   The humidity value assigned to the square can never be smaller than 0 or larger than 100.
+ *          | (this.getHumidity() >= 0) && (this.getHumidity() <= 100)
+ * @invar   The square can never contain more than 3 door borders.
+ *          | count = 0
+ *          | for (Direction d : Direction.values())
+ *          |    if (square.getBorder(dir) instanceof Door)
+ *          |        count++
+ *          | count <= 3
  *
- * @author Frederic Hannes (http://www.freddy1990.net/)
+ * @author  Frederic Hannes (http://www.freddy1990.net/)
  */
 
 public class Square {
@@ -129,12 +135,14 @@ public class Square {
         setTemp(temp);
         setHumidity(humidity);
         setSlipperyFloor(false);
+        Door door = new Door(false);
+        Door wall = new Door(false);
         for (Direction dir : Direction.values())
             if ((dirs != null) && (dirs.contains(dir))) {
-                if (Tools.randBool())
-                    setBorder(new Wall(Tools.randBool()), dir);
+                if (!door.canLink(this, dir) || Tools.randBool())
+                    setBorder(wall, dir);
                 else
-                    setBorder(new Door(Tools.randBool()), dir);
+                    setBorder(door, dir);
             } else
                 setBorder(new NoBorder(), dir);
     }
@@ -527,6 +535,8 @@ public class Square {
         if ((border != null) && (dir != null) && canChangeBorder()) {
             border = (Border) border.clone();
             if (getBorders().containsKey(dir)) {
+                if (!border.canLink(this, dir))
+                    return;
                 Border old = updateBorder(border, dir);
                 if (old.getAdjacent() != null) {
                     Border newBorder = (Border) border.clone();
@@ -534,6 +544,10 @@ public class Square {
                     newBorder.setAdjacent(border);
                     Square neighbour = old.getAdjacent().getSquare();
                     old.setAdjacent(null);
+                    if (!newBorder.canLink(neighbour, dir.opposite())) {
+                        updateBorder(old, dir);
+                        return;
+                    }
                     old = neighbour.updateBorder(newBorder, dir.opposite());
                     old.setAdjacent(null);
                 }

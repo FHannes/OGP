@@ -35,6 +35,17 @@ public abstract class Border {
     public abstract boolean overridden(Border border);
 
     /**
+     * Checks whether the border can be linked to a given square in a given direction.
+     *
+     * @param   square
+     *          The given square.
+     * @param   dir
+     *          The given direction
+     * @return  True if the border can be linked to the square in the given direction.
+     */
+    public abstract boolean canLink(Square square, Direction dir);
+
+    /**
      * Return the square the adjacent is linked to.
      */
     @Basic
@@ -87,8 +98,5 @@ public abstract class Border {
      */
     @Override
     public abstract Object clone();
-
-    // TODO: Check if door can be placed in given direction
-    // TODO: Check if maximum door limit is reached
 
 }

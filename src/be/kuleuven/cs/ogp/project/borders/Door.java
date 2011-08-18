@@ -1,6 +1,8 @@
 package be.kuleuven.cs.ogp.project.borders;
 
 import be.kuleuven.cs.ogp.project.Border;
+import be.kuleuven.cs.ogp.project.Direction;
+import be.kuleuven.cs.ogp.project.Square;
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Raw;
 
@@ -50,6 +52,31 @@ public class Door extends Border {
     @Override
     public boolean overridden(Border border) {
         return (border instanceof Wall);
+    }
+
+    /**
+     * Checks whether the border can be linked to a given square in a given direction.
+     *
+     * @param   square
+     *          The given square.
+     * @param   dir
+     *          The given direction
+     * @return  False if the given direction is the floor of the square.
+     *          | if (dir == Direction.FLOOR)
+     *          | result == false
+     * @return  True if the square contains less than 3 doors.
+     */
+    @Override
+    public boolean canLink(Square square, Direction dir) {
+        if (dir == Direction.FLOOR)
+            return false;
+        int count = 0;
+        for (Direction d : Direction.values()) {
+            Border border = square.getBorder(dir);
+            if (border instanceof Door)
+                count++;
+        }
+        return count < 3;
     }
 
     /**
