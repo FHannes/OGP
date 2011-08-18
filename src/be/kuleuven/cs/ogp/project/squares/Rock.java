@@ -21,6 +21,19 @@ import be.kuleuven.cs.ogp.project.borders.Wall;
  */
 public class Rock extends Square {
 
+    /**
+     * Creates an instance of a rock square.
+     *
+     * @effect  Sets the temperature to 0.
+     *          | setTemp(0)
+     * @effect  Sets the humidity to 0.
+     *          | setHumidity(0)
+     * @effect  Sets the floor's slippery flag to false.
+     *          | setSlipperyFloor(false)
+     * @effect  Surrounds the square by wall borders in every direction.
+     *          | for (dir : Direction.values())
+     *          |   setBorder(new Wall(false), dir)
+     */
     public Rock() {
         setTemp(0);
         setHumidity(0);
@@ -82,4 +95,5 @@ public class Rock extends Square {
     public boolean isSolid() {
         return true;
     }
+
 }

@@ -87,4 +87,8 @@ public abstract class Border {
      */
     @Override
     public abstract Object clone();
+
+    // TODO: Check if door can be placed in given direction
+    // TODO: Check if maximum door limit is reached
+
 }
