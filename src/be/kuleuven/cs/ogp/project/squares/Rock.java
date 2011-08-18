@@ -65,4 +65,12 @@ public class Rock extends Square {
             setRestricted(true);
         }
     }
+
+    /**
+     * Returns true if the square is solid and can not contain anything.
+     */
+    @Override
+    public boolean isSolid() {
+        return true;
+    }
 }

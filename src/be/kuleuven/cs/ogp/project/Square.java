@@ -699,12 +699,17 @@ public class Square {
      * @return  Returns false if the current square does not belong to a dungeon.
      *          | if (getDungeon() == null)
      *          |   result == false
+     * @return  Returns false if the given square is invalid or solid.
+     *          | if ((square == null) || (square.isSolid()))
+     *          |   result == false
      * @return  If the current square belongs to a dungeon, returns true if the given square can be reached from it.
      *          | space = getDungeon().getSpace(getPos())
      *          |   space.contains(square)
      */
     public boolean canReach(Square square) {
         if (getDungeon() == null)
+            return false;
+        if ((square == null) || (square.isSolid()))
             return false;
         List<Square> space = getDungeon().getSpace(getPos());
         return space.contains(square);
@@ -729,6 +734,13 @@ public class Square {
      */
     protected void setRestricted(boolean restricted) {
         this.restricted = restricted;
+    }
+
+    /**
+     * Returns true if the square is solid and can not contain anything.
+     */
+    public boolean isSolid() {
+        return false;
     }
 
     /**
