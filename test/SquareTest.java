@@ -1,6 +1,9 @@
 import static org.junit.Assert.fail;
 
+import be.kuleuven.cs.ogp.project.Direction;
+import be.kuleuven.cs.ogp.project.Dungeon;
 import be.kuleuven.cs.ogp.project.Square;
+import be.kuleuven.cs.ogp.project.tools.Point3D;
 import org.junit.Test;
 
 /**
@@ -30,13 +33,15 @@ public class SquareTest {
     @Test
     public void testGetColdDmg_1() {
         sq.setTemp(25);
-        assert sq.getColdDmg() == 0;
+        if (sq.getColdDmg() != 0)
+            fail("Cold damage was calculated incorrectly!");
     }
 
     @Test
     public void testGetColdDmg_2() {
         sq.setTemp(-7);
-        assert sq.getColdDmg() == 0;
+        if (sq.getColdDmg() != 0)
+            fail("Cold damage was calculated incorrectly!");
     }
 
     @Test
@@ -44,6 +49,37 @@ public class SquareTest {
         sq.setTemp(-15);
         if (sq.getColdDmg() != 1)
             fail("Cold damage was calculated incorrectly!");
+    }
+
+    @Test
+    public void testGetHeatDmg_1() {
+        sq.setTemp(25);
+        if (sq.getHeatDmg() != 0)
+            fail("Heat damage was calculated incorrectly!");
+    }
+
+    @Test
+    public void testGetHeatDmg_2() {
+        sq.setTemp(37);
+        if (sq.getHeatDmg() != 0)
+            fail("Heat damage was calculated incorrectly!");
+    }
+
+    @Test
+    public void testGetHeatDmg_3() {
+        sq.setTemp(50);
+        if (sq.getHeatDmg() != 1)
+            fail("Heat damage was calculated incorrectly!");
+    }
+
+    @Test
+    public void testNeighbour() {
+        Dungeon d = new Dungeon();
+        d.addSquare(sq, new Point3D(1, 0, 0));
+        Square sq2 = new Square();
+        d.addSquare(sq2, new Point3D(2, 0, 0));
+        if (!sq.getBorder(Direction.EAST).getAdjacent().getSquare().equals(sq2))
+            fail("The square is linked incorrectly!");
     }
 
 }
