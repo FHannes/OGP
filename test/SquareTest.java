@@ -1,9 +1,8 @@
 import static org.junit.Assert.fail;
 
-import be.kuleuven.cs.ogp.project.CompositeDungeon;
-import be.kuleuven.cs.ogp.project.Direction;
-import be.kuleuven.cs.ogp.project.Dungeon;
-import be.kuleuven.cs.ogp.project.Square;
+import be.kuleuven.cs.ogp.project.*;
+import be.kuleuven.cs.ogp.project.borders.Door;
+import be.kuleuven.cs.ogp.project.borders.Wall;
 import be.kuleuven.cs.ogp.project.tools.Point3D;
 import org.junit.Test;
 
@@ -101,6 +100,69 @@ public class SquareTest {
         d.addSquare(sq, pos);
         if (!sq.getPos().equals(pos))
             fail("The square is not properly assigned to the dungeon!");
+    }
+
+    @Test
+    public void testBorder_1() {
+        Square sq = new Square();
+        sq.setBorder(new Wall(false), Direction.EAST);
+        if (!(sq.getBorder(Direction.EAST) instanceof Wall))
+            fail("Error with setBorder!");
+    }
+
+    @Test
+    public void testBorder_2() {
+        Square sq = new Square();
+        sq.setBorder(new Door(false), Direction.WEST);
+        if (!(sq.getBorder(Direction.WEST) instanceof Door))
+            fail("Error with setBorder!");
+    }
+
+    /**
+     * Test to make sure the floor of a square can't contain a door.
+     */
+    @Test
+    public void testBorder_3() {
+        Square sq = new Square();
+        sq.setBorder(new Door(false), Direction.FLOOR);
+        if ((sq.getBorder(Direction.FLOOR) instanceof Door))
+            fail("Error with setBorder!");
+    }
+
+    @Test
+    public void testSlippery_1() {
+        Square sq = new Square();
+        sq.setHumidity(100);
+        sq.setTemp(5);
+        if (!sq.isSlippery())
+            fail("Error with isSlippery!");
+    }
+
+    @Test
+    public void testSlippery_2() {
+        Square sq = new Square();
+        sq.setHumidity(99);
+        sq.setTemp(5);
+        if (sq.isSlippery())
+            fail("Error with isSlippery!");
+    }
+
+    @Test
+    public void testSlippery_3() {
+        Square sq = new Square();
+        sq.setHumidity(11);
+        sq.setTemp(-5);
+        if (!sq.isSlippery())
+            fail("Error with isSlippery!");
+    }
+
+    @Test
+    public void testSlippery_4() {
+        Square sq = new Square();
+        sq.setHumidity(10);
+        sq.setTemp(-5);
+        if (sq.isSlippery())
+            fail("Error with isSlippery!");
     }
 
     @Test
