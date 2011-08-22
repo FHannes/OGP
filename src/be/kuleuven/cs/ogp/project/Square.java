@@ -33,6 +33,11 @@ import java.util.*;
 public class Square {
 
     /**
+     * Set to false to disable the editing of borders after a border is part of 2 squares.
+     */
+    private static final boolean CAN_EDIT_BORDERS = true;
+
+    /**
      * The minimum temperature below which cold damage can occur.
      */
     @Model
@@ -561,6 +566,10 @@ public class Square {
                     return;
                 Border old = updateBorder(border, dir);
                 if (old.getAdjacent() != null) {
+                    if (!CAN_EDIT_BORDERS) {
+                        updateBorder(old, dir);
+                        return;
+                    }
                     Border newBorder = (Border) border.clone();
                     border.setAdjacent(newBorder);
                     newBorder.setAdjacent(border);
