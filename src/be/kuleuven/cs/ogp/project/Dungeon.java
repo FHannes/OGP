@@ -1,13 +1,11 @@
 package be.kuleuven.cs.ogp.project;
 
-import be.kuleuven.cs.ogp.project.dungeons.CompositeDungeon;
 import be.kuleuven.cs.ogp.project.squares.Teleport;
 import be.kuleuven.cs.ogp.project.tools.Point3D;
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +33,7 @@ public class Dungeon<T extends Square> {
     /**
      * The composite dungeon which contains this dungeon.
      */
-    private CompositeDungeon<Square> dungeon = null;
+    private CompositeDungeon<T> dungeon = null;
 
     /**
      * The position of this dungeon in it's parent dungeon.
@@ -304,7 +302,7 @@ public class Dungeon<T extends Square> {
      *          | square == null
      * @throws  IllegalArgumentException
      *          Throws an illegal argument exception if the given square is already part of a dungeon.
-     *          | square.getDungeon() != null
+     *          | square.getDungeonAt() != null
      * @throws  IllegalArgumentException
      *          Throws an illegal argument exception if the given position is invalid.
      *          | !isValidPos(pos)
@@ -500,7 +498,8 @@ public class Dungeon<T extends Square> {
      * Returns the parent dungeon of the given dungeon. If the dungeon does not have a parent dungeon, the method
      * returns null.
      */
-    public CompositeDungeon<Square> getDungeon() {
+    @Basic
+    public CompositeDungeon<T> getDungeon() {
         return dungeon;
     }
 
@@ -512,16 +511,38 @@ public class Dungeon<T extends Square> {
      * @post    The new parent dungeon equals the given dungeon.
      *          |
      */
-    protected void setDungeon(CompositeDungeon<Square> dungeon) {
+    @Basic
+    protected void setDungeon(CompositeDungeon<T> dungeon) {
         this.dungeon = dungeon;
     }
 
     /**
-     * Returns the position of the dungeon in it's parent dungeon. If the dungeon does not have a parent dungeon, the
-     * method returns null.
+     * Returns the relative position of the dungeon in it's parent dungeon. If the dungeon does not have a parent
+     * dungeon, the method returns null.
      */
     public Point3D getPos() {
-        return pos;
+        if (pos == null)
+            return null;
+        else
+            return (Point3D) pos.clone();
+    }
+
+    /**
+     * Returns the absolute position of the dungeon on the playing field. If the dungeon does not have a parent dungeon,
+     * the method returns null.
+     *
+     * @result  If the dungeon has a parent dungeon, the absolute position is returned, recursively factoring in that
+     *          parent.
+     *          | if ((this.getDungeonAt() != null) && (this.getPos() != null))
+     *          |   result == this.getDungeonAt().getPos().add(this.getPos())
+     * @result  If the dungeon does not have a parent dungeon, null is returned.
+     *          | if ((this.getDungeonAt() == null) || (this.getPos() == null))
+     *          |   result == null;
+     */
+    public Point3D getAbsolutePos() {
+        if ((this.getDungeon() != null) && (this.getPos() != null))
+            return this.getDungeon().getPos().add(this.getPos());
+        else return null;
     }
 
     /**
@@ -532,6 +553,7 @@ public class Dungeon<T extends Square> {
      * @post    The new position equals the given position.
      *          | new.getPos() == pos
      */
+    @Basic
     protected void setPos(Point3D pos) {
         this.pos = pos;
     }

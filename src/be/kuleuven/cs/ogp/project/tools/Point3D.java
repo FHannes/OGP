@@ -117,6 +117,46 @@ public class Point3D {
     }
 
     /**
+     * Returns a point with the coordinates of the given point added to those of the current point.
+     *
+     * @param   pos
+     *          The given point.
+     * @return  The added points.
+     *          | res = pos.clone()
+     *          | res.setX(this.getX() + res.getX())
+     *          | res.setY(this.getY() + res.getY())
+     *          | res.setZ(this.getZ() + res.getZ())
+     *          | result == res
+     */
+    public Point3D add(Point3D pos) {
+        Point3D res = (Point3D) pos.clone();
+        res.setX(this.getX() + res.getX());
+        res.setY(this.getY() + res.getY());
+        res.setZ(this.getZ() + res.getZ());
+        return res;
+    }
+
+    /**
+     * Returns a point with the coordinates of the given point subtracted from those of the current point.
+     *
+     * @param   pos
+     *          The given point.
+     * @return  The subtracted points.
+     *          | res = pos.clone()
+     *          | res.setX(this.getX() - res.getX())
+     *          | res.setY(this.getY() - res.getY())
+     *          | res.setZ(this.getZ() - res.getZ())
+     *          | result == res
+     */
+    public Point3D subtract(Point3D pos) {
+        Point3D res = (Point3D) pos.clone();
+        res.setX(this.getX() - res.getX());
+        res.setY(this.getY() - res.getY());
+        res.setZ(this.getZ() - res.getZ());
+        return res;
+    }
+
+    /**
      * Creates and returns a copy of this object.
      *
      * @return  Returns a clone of the object.

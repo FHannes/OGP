@@ -4,17 +4,17 @@ import be.kuleuven.cs.ogp.project.Dungeon;
 import be.kuleuven.cs.ogp.project.Square;
 
 /**
- * This class represents a plateau type dungeon.
+ * This class represents a level (plateau) type dungeon.
  *
  * @invar   The Z dimension of a plateau is always 1.
  *          | this.getZDim() == 1
  *
  * @author  Frederic Hannes
  */
-public class Plateau<T extends Square> extends Dungeon<T> {
+public class Level<T extends Square> extends Dungeon<T> {
 
     /**
-     * Creates a new instance of a plateau dungeon.
+     * Creates a new instance of a level dungeon.
      *
      * @effect  Sets the maximum dungeon dimensions to the maximum value for Long, except for the Z dimension which is
      *          set to a maximum size of 1.
@@ -22,7 +22,7 @@ public class Plateau<T extends Square> extends Dungeon<T> {
      *          | setYDimMax(Long.MAX_VALUE)
      *          | setZDimMax(1)
      */
-    public Plateau() {
+    public Level() {
         setXDimMax(Long.MAX_VALUE);
         setYDimMax(Long.MAX_VALUE);
         setZDimMax(1);

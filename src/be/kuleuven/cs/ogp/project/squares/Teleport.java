@@ -24,8 +24,8 @@ public class Teleport extends Square {
      *          The given square.
      * @pre     The given square must be valid, not solid, the current square must be in a dungeon and the given square
      *          in the same one.
-     *          | (square != null) && (!square.isSolid()) && (this.getDungeon() != null) &&
-     *          |   this.getDungeon().equals(square.getDungeon()))
+     *          | (square != null) && (!square.isSolid()) && (this.getDungeonAt() != null) &&
+     *          |   this.getDungeonAt().equals(square.getDungeonAt()))
      * @post    The given square is now part of the destination squares.
      *          | getDest().contains(square) == true
      */

@@ -192,7 +192,7 @@ public class Square {
      *          Throws an illegal argument exception when the square is already linked to a dungeon.
      *          | this.dungeon != null
      * @post    The parent dungeon is set to the given dungeon.
-     *          | new.getDungeon() == dungeon
+     *          | new.getDungeonAt() == dungeon
      */
     @Model
     void setDungeon(Dungeon dungeon) throws IllegalArgumentException {
@@ -204,12 +204,34 @@ public class Square {
     }
 
     /**
-     * Returns the position of the square in it's parent dungeon if it is assigned to one. If the square has not yet
-     * been assigned to a dungeon, null is returned. The returned object is a clone of the internal object to prevent
-     * the internal data from being modified.
+     * Returns the relative position of the square in it's parent dungeon if it is assigned to one. If the square has
+     * not yet been assigned to a dungeon, null is returned. The returned object is a clone of the internal object to
+     * prevent the internal data from being modified.
      */
     public Point3D getPos() {
-        return (Point3D) pos.clone();
+        if (pos == null)
+            return null;
+        else
+            return (Point3D) pos.clone();
+    }
+
+    /**
+     * Returns the absolute position of the square on the playing field if it is assigned to one. If the square has not
+     * yet been assigned to a dungeon, null is returned. The returned object is a clone of the internal object to
+     * prevent the internal data from being modified.
+     *
+     * @result  If the square has a parent dungeon, the absolute position is returned, recursively factoring in that
+     *          parent.
+     *          | if ((this.getDungeonAt() != null) && (this.getPos() != null))
+     *          |   result == this.getDungeonAt().getPos().add(this.getPos())
+     * @result  If the square does not have a parent dungeon, null is returned.
+     *          | if ((this.getDungeonAt() == null) || (this.getPos() == null))
+     *          |   result == null;
+     */
+    public Point3D getAbsolutePos() {
+        if ((this.getDungeon() != null) && (this.getPos() != null))
+            return this.getDungeon().getPos().add(this.getPos());
+        else return null;
     }
 
     /**
@@ -633,13 +655,13 @@ public class Square {
      *          | square == null
      * @throws  IllegalArgumentException
      *          Throws an illegal argument exception if the dungeon isn't set for one of the squares.
-     *          | (this.getDungeon() == null) || (square.getDungeon() == null)
+     *          | (this.getDungeonAt() == null) || (square.getDungeonAt() == null)
      * @throws  IllegalArgumentException
      *          Throws an illegal argument exception if the position isn't set for one of the squares.
      *          | (this.getPos() == null) || (square.getPos() == null)
      * @throws  IllegalArgumentException
      *          Throws an illegal argument exception if the squares are located in different dungeons.
-     *          | !this.getDungeon().equals(square.getDungeon())
+     *          | !this.getDungeonAt().equals(square.getDungeonAt())
      * @throws  IllegalArgumentException
      *          Throws an illegal argument exception if the squares are not next to each other in the given direction.
      *          | !square.getPos().equals(dir.move(this.getPos()))
@@ -691,7 +713,7 @@ public class Square {
      * Internal method to unlink a square from it's dungeon and all neighbouring squares.
      *
      * @post    The square is no longer linked to it's dungeon.
-     *          | new.getDungeon() == null
+     *          | new.getDungeonAt() == null
      */
     void unlink() {
         for (Direction dir : Direction.values()) {
@@ -711,13 +733,13 @@ public class Square {
      * @param   square
      *          The given square.
      * @return  Returns false if the current square does not belong to a dungeon.
-     *          | if (getDungeon() == null)
+     *          | if (getDungeonAt() == null)
      *          |   result == false
      * @return  Returns false if the given square is invalid or solid.
      *          | if ((square == null) || (square.isSolid()))
      *          |   result == false
      * @return  If the current square belongs to a dungeon, returns true if the given square can be reached from it.
-     *          | space = getDungeon().getSpace(getPos())
+     *          | space = getDungeonAt().getSpace(getPos())
      *          |   space.contains(square)
      */
     public boolean canReachDirect(Square square) {
@@ -736,13 +758,13 @@ public class Square {
      * @param   square
      *          The given square.
      * @return  Returns false if the current square does not belong to a dungeon.
-     *          | if (getDungeon() == null)
+     *          | if (getDungeonAt() == null)
      *          |   result == false
      * @return  Returns false if the given square is invalid or solid.
      *          | if ((square == null) || (square.isSolid()))
      *          |   result == false
      * @return  If the current square belongs to a dungeon, returns true if the given square can be reached from it.
-     *          | space = getDungeon().getTeleSpace(getPos())
+     *          | space = getDungeonAt().getTeleSpace(getPos())
      *          |   space.contains(square)
      */
     public boolean canReach(Square square) {
