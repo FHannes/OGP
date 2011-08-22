@@ -52,10 +52,10 @@ public class CompositeDungeon<T extends Square> extends Dungeon<T> {
     /**
      * Adds a dungeon to this dungeon. Checks if a dungeon is already present at the given position.
      *
-     * @param   pos
-     *          The given position.
      * @param   dungeon
      *          The given dungeon.
+     * @param   pos
+     *          The given position.
      * @throws  IllegalArgumentException
      *          Throws an illegal argument exception if one of the arguments is invalid.
      * @throws  IllegalArgumentException
@@ -66,12 +66,12 @@ public class CompositeDungeon<T extends Square> extends Dungeon<T> {
      *          Throws an illegal argument exception if a dungeon is already present at the given position.
      */
     // TODO: Check overlap
-    public void addDungeon(Point3D pos, Dungeon dungeon) throws IllegalArgumentException {
+    public void addDungeon(Dungeon dungeon, Point3D pos) throws IllegalArgumentException {
         if ((pos == null) || (dungeon == null))
             throw new IllegalArgumentException("Invalid position or dungeon!");
         if (dungeon.getDungeon() != null)
             throw new IllegalArgumentException("Dungeon already assigned!");
-        if (!dungeon.equals(this))
+        if (dungeon.equals(this))
             throw new IllegalArgumentException("Can't add dungeon to itself!");
         if (getDungeonAt(pos) != null)
             throw new IllegalArgumentException("Dungeon already present at the given position!");
