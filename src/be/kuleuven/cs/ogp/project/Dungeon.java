@@ -1,5 +1,6 @@
 package be.kuleuven.cs.ogp.project;
 
+import be.kuleuven.cs.ogp.project.dungeons.CompositeDungeon;
 import be.kuleuven.cs.ogp.project.squares.Teleport;
 import be.kuleuven.cs.ogp.project.tools.Point3D;
 import be.kuleuven.cs.som.annotate.Basic;
@@ -30,6 +31,16 @@ public class Dungeon<T extends Square> {
      * The maximum allowed fraction of squares with a slippery floor in the dungeon.
      */
     private static final double MAX_SLIPPERY = 0.2; // 0 <= MAX_SLIPPERY <= 1
+
+    /**
+     * The composite dungeon which contains this dungeon.
+     */
+    private CompositeDungeon<Square> dungeon = null;
+
+    /**
+     * The position of this dungeon in it's parent dungeon.
+     */
+    private Point3D pos = null;
 
     /**
      * The maximum size of the X dimension.
@@ -483,6 +494,46 @@ public class Dungeon<T extends Square> {
         List<Square> space = new ArrayList<>();
         getSpace(space, pos, true);
         return space;
+    }
+
+    /**
+     * Returns the parent dungeon of the given dungeon. If the dungeon does not have a parent dungeon, the method
+     * returns null.
+     */
+    public CompositeDungeon<Square> getDungeon() {
+        return dungeon;
+    }
+
+    /**
+     * Sets the parent dungeon for the dungeon.
+     *
+     * @param   dungeon
+     *          The given dungeon.
+     * @post    The new parent dungeon equals the given dungeon.
+     *          |
+     */
+    protected void setDungeon(CompositeDungeon<Square> dungeon) {
+        this.dungeon = dungeon;
+    }
+
+    /**
+     * Returns the position of the dungeon in it's parent dungeon. If the dungeon does not have a parent dungeon, the
+     * method returns null.
+     */
+    public Point3D getPos() {
+        return pos;
+    }
+
+    /**
+     * Sets the position of the dungeon in it's parent dungeon.
+     *
+     * @param   pos
+     *          The given position.
+     * @post    The new position equals the given position.
+     *          | new.getPos() == pos
+     */
+    protected void setPos(Point3D pos) {
+        this.pos = pos;
     }
 
 }
