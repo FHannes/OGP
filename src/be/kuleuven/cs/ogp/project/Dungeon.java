@@ -5,11 +5,9 @@ import be.kuleuven.cs.ogp.project.tools.Point3D;
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
+import sun.rmi.log.LogInputStream;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The class containing the most basic dungeon type.
@@ -509,7 +507,7 @@ public class Dungeon<T extends Square> {
      * @param   dungeon
      *          The given dungeon.
      * @post    The new parent dungeon equals the given dungeon.
-     *          |
+     *          | new.getDungeon() == dungeon
      */
     @Basic
     protected void setDungeon(CompositeDungeon<T> dungeon) {
@@ -556,6 +554,32 @@ public class Dungeon<T extends Square> {
     @Basic
     protected void setPos(Point3D pos) {
         this.pos = pos;
+    }
+
+    /**
+     * Returns an iterator to iterate over all squares in the dungeon.
+     */
+    public Iterator<Square> iterator() {
+        return (Iterator<Square>) getSquares().values().iterator();
+    }
+
+    /**
+     * Internal method to fill a list with all teleport squares present in the dungeon.
+     */
+    protected void getTeleports(List<TeleportInterface> teleports) {
+        for (Square sq : getSquares().values())
+            if (sq instanceof TeleportInterface)
+                teleports.add((TeleportInterface) sq);
+
+    }
+
+    /**
+     * Returns a list of all teleports in the dungeon recursively.
+     */
+    public List<TeleportInterface> getTeleports() {
+        List<TeleportInterface> teleports = new ArrayList<>();
+        getTeleports(teleports);
+        return teleports;
     }
 
 }

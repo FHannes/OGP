@@ -1,23 +1,13 @@
-package be.kuleuven.cs.ogp.project.squares;
+package be.kuleuven.cs.ogp.project;
 
-import be.kuleuven.cs.ogp.project.Square;
-import be.kuleuven.cs.ogp.project.TeleportInterface;
-import be.kuleuven.cs.ogp.project.tools.Tools;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class represents a teleportation square.
+ * This interface defines the methods required for teleportation squares.
  *
- * @author Frederic Hannes
+ * @author  Frederic Hannes
  */
-public class Teleport extends Square implements TeleportInterface {
-
-    /**
-     * A list containing all teleport destinations.
-     */
-    private List<Square> dest = new ArrayList<>();
+public interface TeleportInterface {
 
     /**
      *
@@ -30,11 +20,7 @@ public class Teleport extends Square implements TeleportInterface {
      * @post    The given square is now part of the destination squares.
      *          | getDest().contains(square) == true
      */
-    public void addDest(Square square) {
-        assert((square != null) && (!square.isSolid()) && (this.getDungeon() != null) &&
-                this.getDungeon().equals(square.getDungeon()));
-        getDest().add(square);
-    }
+    public void addDest(Square square);
 
     /**
      * Returns a random destination square to teleport to.
@@ -46,17 +32,11 @@ public class Teleport extends Square implements TeleportInterface {
      *          | if (getDest().size() != 0)
      *          |   result == getDest().get(Tools.random(getDest().size()))
      */
-    public Square teleport() {
-        if (getDest().size() == 0)
-            return null;
-        return getDest().get(Tools.random(getDest().size()));
-    }
+    public Square teleport();
 
     /**
      * Returns the list containing all destination squares.
      */
-    public List<Square> getDest() {
-        return dest;
-    }
+    public List<Square> getDest();
 
 }

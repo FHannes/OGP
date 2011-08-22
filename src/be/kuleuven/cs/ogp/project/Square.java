@@ -89,6 +89,11 @@ public class Square {
     private Point3D pos = null;
 
     /**
+     * The avatar that's positioned on the square.
+     */
+    private Avatar avatar = null;
+
+    /**
      * Stores the temperature of the square in degrees Celsius.
      */
     private int temp;
@@ -848,6 +853,42 @@ public class Square {
     public String toString() {
         return "Square(temp:" + getTemp() + ";humidity:" + getHumidity() + ";slippery:" + isSlipperyFloor() + ";pos:" +
             getPos() + ")";
+    }
+
+    /**
+     * Returns the avatar currently positioned on the square.
+     */
+    @Basic
+    public Avatar getAvatar() {
+        return avatar;
+    }
+
+    /**
+     * Internal method to assign an avatar to a square.
+     *
+     * @param   avatar
+     *          The given avatar
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the given avatar is invalid.
+     *          | avatar == null
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the square is solid.
+     *          | this.isSolid() == true
+     * @post    The new avatar equals the given avatar.
+     *          | new.getAvatar() == avatar
+     */
+    protected void setAvatar(Avatar avatar) throws IllegalArgumentException {
+        if (this.isSolid())
+            throw new IllegalArgumentException("Can't position an avatar on a solid square!");
+        if (avatar == null)
+            this.avatar = null;
+        else if (this.avatar == null)
+            this.avatar = avatar;
+        else
+            if (Tools.randBool()) {
+                this.avatar.kill();
+                this.avatar = avatar;
+            } else avatar.kill();
     }
 
 }

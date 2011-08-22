@@ -15,11 +15,13 @@
 
 5. Samengestelde kerkers kunnen vanaf nu ook zelf vakjes bevatten. Uiteraard kan dat enkel op posities die niet
     ingenomen worden door deelkerkers.
+[CHECK]
 
 6. Er moet een methode worden uitgewerkt voor kerkers die alle teleportatievakjes teruggeeft, die de kerker direct of
     indirect bevat. Die methode moet zodanig zijn dat ze niet moet aangepast worden wanneer er andere soorten
     teleportatievakjes worden ingevoerd (en ook niet als bijvoorbeeld rotsvakjes ook teleportatiefaciliteiten zouden
     krijgen).
+[CHECK]
 
 7. Er worden een reeks extra beperkingen opgelegde omtrent de inhoud van een samengestelde kerker. Ten eerste mogen
     kerkers die deel uitmaken van een samengestelde niet overlappen. Verder mag geen enkele kerker die deel uitmaakt van
@@ -32,3 +34,4 @@
     beslist of de beweging gaat naar het naburige vakje, dan wel naar één van de bestemmingen van het teleportatievakje.
     Verschillende avatars kunnen nooit samen op een zelfde vakje staan. Als een avatar zich beweegt naar een vakje waar
     zich reeds een avatar bevindt, zal willekeurig één van beiden sterven.
+[CHECK]

@@ -61,6 +61,8 @@ public class CompositeDungeon<T extends Square> extends Dungeon<T> {
      * @throws  IllegalArgumentException
      *          Throws an illegal argument exception if the given dungeon already has a parent dungeon.
      * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the dungeon is being added to itself.
+     * @throws  IllegalArgumentException
      *          Throws an illegal argument exception if a dungeon is already present at the given position.
      */
     // TODO: Check overlap
@@ -69,11 +71,58 @@ public class CompositeDungeon<T extends Square> extends Dungeon<T> {
             throw new IllegalArgumentException("Invalid position or dungeon!");
         if (dungeon.getDungeon() != null)
             throw new IllegalArgumentException("Dungeon already assigned!");
+        if (!dungeon.equals(this))
+            throw new IllegalArgumentException("Can't add dungeon to itself!");
         if (getDungeonAt(pos) != null)
             throw new IllegalArgumentException("Dungeon already present at the given position!");
         getDungeons().put(pos, dungeon);
         dungeon.setDungeon(this);
         dungeon.setPos((Point3D) pos.clone());
+    }
+
+    /**
+     * Adds a square to the dungeon.
+     *
+     * @param   square
+     *          The given square.
+     * @param   pos
+     *          The given position for the square.
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the given square is invalid.
+     *          | square == null
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the given square is already part of a dungeon.
+     *          | square.getDungeonAt() != null
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the given position is invalid.
+     *          | !isValidPos(pos)
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if a square exists at the given position.
+     *          | this.getSquares().containsKey(pos)
+     * @throws  IllegalArgumentException
+     *          Throws an illegal argument exception if the maximum allowed number of squares with a slippery floor is
+     *          already present in the dungeon.
+     *          | (slipperyCount / getSquares().size()) > MAX_SLIPPERY
+     * @effect  Increases all dimensions to the required size if the given position does not fall inside of the current
+     *          dimensions.
+     *          | if (pos.getX() >= this.getXDim())
+     *          |   this.setXDim(pos.getX() + 1);
+     *          | if (pos.getY() >= this.getYDim())
+     *          |   this.setYDim(pos.getY() + 1);
+     *          | if (pos.getZ() >= this.getZDim())
+     *          |   this.setZDim(pos.getZ() + 1);
+     * @post    The given square is now part of the dungeon.
+     *          | new.getSquare(pos).equals(square) == true
+     * @effect  The square is assigned to the dungeon and can not be assigned to any other dungeon afterwards.
+     *          | square.setDungeon(this)
+     *          | square.setPos(pos)
+     */
+    @Override
+    public void addSquare(T square, Point3D pos) throws IllegalArgumentException {
+        Dungeon d = getDungeonAt(pos);
+        if ((d != null) && (d.hasSquare(pos)))
+            throw new IllegalArgumentException("Square already present at the given position!");
+        super.addSquare(square, pos);
     }
 
     /**
@@ -97,6 +146,18 @@ public class CompositeDungeon<T extends Square> extends Dungeon<T> {
         List<Dungeon> res = new ArrayList<>();
         getLevelsAndShafts(res);
         return res;
+    }
+
+    /**
+     * Returns a list of all teleports in the dungeon recursively.
+     */
+    @Override
+    public List<TeleportInterface> getTeleports() {
+        List<TeleportInterface> teleports = new ArrayList<>();
+        getTeleports(teleports);
+        for (Dungeon d : getDungeons().values())
+            d.getTeleports(teleports);
+        return teleports;
     }
 
 }
