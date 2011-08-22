@@ -478,7 +478,7 @@ public class Square {
      * Determines whether the square is slippery.
      *
      * @return  Returns true if the square is slippery because of a slippery floor, or when the humidity of the square
-     *          is 100% and the    temperature is larger than 0°C, or when the humidity is larger than 10% and the
+     *          is 100% and the temperature is larger than 0°C, or when the humidity is larger than 10% and the
      *          temperature of the square is not positive.
      *          | result == isSlipperyFloor() || ((getHumidity() == 100) && (getTemp() > 0)) || ((getHumidity() > 10)
      *          |   && (getTemp() <= 0));

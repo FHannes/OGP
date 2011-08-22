@@ -99,7 +99,10 @@ public class Avatar {
         if (this.getSquare().getBorder(dir).getAdjacent() == null)
             throw new IllegalArgumentException("There's no other square in the given direction!");
         this.getSquare().setAvatar(null);
-        this.getSquare().getBorder(dir).getAdjacent().getSquare().setAvatar(this);
+        Square sq = this.getSquare().getBorder(dir).getAdjacent().getSquare();
+        while (sq instanceof TeleportInterface)
+            sq = ((TeleportInterface) sq).teleport();
+        sq.setAvatar(this);
     }
 
 }
