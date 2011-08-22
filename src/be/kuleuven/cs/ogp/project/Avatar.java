@@ -64,6 +64,7 @@ public class Avatar {
      *          Throws an illegal argument exception if the avatar is already on the given square.
      * @throws  IllegalArgumentException
      *          Throws an illegal argument exception if the avatar is dead.
+     * @post    The new square equals the given square.
      */
     public void setSquare(Square square) throws IllegalArgumentException {
         if (square == null)

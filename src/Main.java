@@ -1,7 +1,6 @@
 import be.kuleuven.cs.ogp.project.Direction;
 import be.kuleuven.cs.ogp.project.Dungeon;
 import be.kuleuven.cs.ogp.project.Square;
-import be.kuleuven.cs.ogp.project.borders.Door;
 import be.kuleuven.cs.ogp.project.borders.Wall;
 import be.kuleuven.cs.ogp.project.squares.Rock;
 import be.kuleuven.cs.ogp.project.tools.Point3D;

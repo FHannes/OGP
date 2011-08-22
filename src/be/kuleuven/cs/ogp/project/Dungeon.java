@@ -1,5 +1,6 @@
 package be.kuleuven.cs.ogp.project;
 
+import be.kuleuven.cs.ogp.project.squares.Rock;
 import be.kuleuven.cs.ogp.project.squares.Teleport;
 import be.kuleuven.cs.ogp.project.tools.Point3D;
 import be.kuleuven.cs.som.annotate.Basic;
@@ -580,6 +581,24 @@ public class Dungeon<T extends Square> {
         List<TeleportInterface> teleports = new ArrayList<>();
         getTeleports(teleports);
         return teleports;
+    }
+
+    /**
+     * Returns a list containing all rock squares in the dungeon with a temperature of at least 200°C.
+     *
+     * @return  The list containing the hot rock squares.
+     *          | squares = new ArrayList<>()
+     *          |   for (sq : getSquares().values())
+     *          |       if ((sq instanceof Rock) && (sq.getTemp() >= 200))
+     *          |           squares.add(sq)
+     *          | result == squares
+     */
+    public List<Square> getHotRockSquares() {
+        List<Square> squares = new ArrayList<>();
+        for (Square sq : getSquares().values())
+            if ((sq instanceof Rock) && (sq.getTemp() >= 200))
+                squares.add(sq);
+        return squares;
     }
 
 }
